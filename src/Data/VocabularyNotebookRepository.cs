@@ -2,24 +2,25 @@ using LiteDB;
 
 namespace NihongoHub.Data
 {
-    public static class WordBookRepository
+    public static class VocabularyNotebookRepository
     {
-        public static Models.Entities.WordBook? FindWordBookById(int id)
+        public static Models.Entities.VocabularyNotebook? FindVocabularyNotebookById(int id)
         {
-            return Init.DatabaseInit.Current.WordBooks.FindById(id);
+            return Init.DatabaseInit.Current.VocabularyNotebooks.FindById(id);
         }
-        public static List<Models.Entities.WordBook> FindWordBooksByUserId(int userId)
+        public static List<Models.Entities.VocabularyNotebook> FindVocabularyNotebooksByUserId(int userId)
         {
-            return Init.DatabaseInit.Current.WordBooks.Find(x => x.userid == userId).ToList();
+            return Init.DatabaseInit.Current.VocabularyNotebooks.Find(x => x.userid == userId).ToList();
         }
 
-        public static bool Insert(Models.Entities.WordBook wordBook,ref string errorMessage,ref Logging.LogCategory errorCategory)
+        public static bool Insert(Models.Entities.VocabularyNotebook vocabularyNotebook,ref string errorMessage,ref Logging.LogCategory errorCategory)
         {
             errorMessage = "";
+            errorCategory = Logging.LogCategory.None;
 
             try
             {
-                Init.DatabaseInit.Current.WordBooks.Insert(wordBook);
+                Init.DatabaseInit.Current.VocabularyNotebooks.Insert(vocabularyNotebook);
             }
             catch(LiteException ex)
             {
@@ -39,13 +40,14 @@ namespace NihongoHub.Data
             }
             return true;
         }
-        public static bool Update(Models.Entities.WordBook wordBook,ref string errorMessage,ref Logging.LogCategory errorCategory)
+        public static bool Update(Models.Entities.VocabularyNotebook vocabularyNotebook,ref string errorMessage,ref Logging.LogCategory errorCategory)
         {
             errorMessage = "";
+            errorCategory = Logging.LogCategory.None;
 
             try
             {
-                if (!Init.DatabaseInit.Current.WordBooks.Update(wordBook))
+                if (!Init.DatabaseInit.Current.VocabularyNotebooks.Update(vocabularyNotebook))
                 {
                     errorMessage = "未能更改单词本数据(可能是单词本不存在)";
                     errorCategory = Logging.LogCategory.Database;

@@ -31,6 +31,7 @@ namespace NihongoHub.Data
         public static bool Insert(Models.Entities.Word word,ref string errorMessage,ref Logging.LogCategory errorCategory)
         {
             errorMessage = "";
+            errorCategory = Logging.LogCategory.None;
 
             try
             {
@@ -57,6 +58,7 @@ namespace NihongoHub.Data
         public static bool Update(Models.Entities.Word word,ref string errorMessage,ref Logging.LogCategory errorCategory)
         {
             errorMessage = "";
+            errorCategory = Logging.LogCategory.None;
             try
             {
                 if (!Init.DatabaseInit.Current.Words.Update(word))

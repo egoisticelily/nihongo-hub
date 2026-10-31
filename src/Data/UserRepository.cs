@@ -21,6 +21,7 @@ namespace NihongoHub.Data
         {
             //先清空hint
             errorMessage = "";
+            errorCategory = Logging.LogCategory.None;
 
             try
             {
@@ -48,6 +49,7 @@ namespace NihongoHub.Data
         public static bool Update(Models.Entities.User user,ref string errorMessage,ref Logging.LogCategory errorCategory)
         {
             errorMessage = "";
+            errorCategory = Logging.LogCategory.None;
 
             try
             {

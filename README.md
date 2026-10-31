@@ -41,6 +41,10 @@ Requires the .NET 10 SDK.
 dotnet build src
 ```
 
+For local development, run `dotnet run --project src --launch-profile http`. The default endpoint is HTTP port 5000; Kestrel reads the actual host, port, and HTTPS settings from `Config/config.json` beside the built application. Update the launch profile URL if you change that port.
+
+Business API routes are not implemented yet; the server currently configures static file handling only.
+
 The project is under active development and is not intended for production use.
 
 ## License

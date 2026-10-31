@@ -6,7 +6,7 @@ namespace NihongoHub.Models.Dtos.Responses
     /// 
     /// 这里定义的Word可供其他返回api使用
     
-    public class WordBookReferenceResponse
+    public class VocabularyNotebookReferenceResponse
     {
         public required int id {get;set;}
         public required string name {get;set;}
@@ -21,7 +21,7 @@ namespace NihongoHub.Models.Dtos.Responses
         public int? akusennto {get;set;}
         public required string meaning {get;set;}
         public string? note {get;set;}
-        public List<WordBookReferenceResponse>? wordbooks {get;set;} //表示包含该单词的单词本
+        public List<VocabularyNotebookReferenceResponse>? vocabularynotebooks {get;set;} //表示包含该单词的单词本
         public required DateTime createdat {get;set;} //UTC
         public required DateTime updatedat {get;set;} //UTC
     }
@@ -29,7 +29,7 @@ namespace NihongoHub.Models.Dtos.Responses
     {
         public required List<WordResponse> words {get;set;}
     }
-    public class WordBookWordsResponse : ApiResponse<WordsResponseData>;
+    public class VocabularyNotebookWordsResponse : ApiResponse<WordsResponseData>;
 
     public class SearchWordsResponse : ApiResponse<WordsResponseData>;
 }
