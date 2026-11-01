@@ -12,7 +12,7 @@ namespace NihongoHub.Models.Dtos.Requests
     public class SearchWordsRequest : ApiRequest<SearchWordsRequestData>;
 
 
-    public class CreatWordRequestData
+    public class CreateWordRequestData
     {
         public string? kannji {get;set;}
         public required string kana {get;set;}
@@ -21,11 +21,11 @@ namespace NihongoHub.Models.Dtos.Requests
         public string? note {get;set;}
 
         /// <summary>
-        /// 将CreatWordRequestData转换为Models.Entities.Word
+        /// 将CreateWordRequestData转换为Models.Entities.Word
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public Entities.Word DataWordTo(int userId)
+        public Entities.Word ToWordEntity(int userId)
         {
             return new Models.Entities.Word()
             {
@@ -40,7 +40,7 @@ namespace NihongoHub.Models.Dtos.Requests
             };
         }
     }
-    public class CreatWordRequest : ApiRequest<CreatWordRequestData>;
+    public class CreateWordRequest : ApiRequest<CreateWordRequestData>;
 
     public class UpdateWordRequestData
     {
@@ -51,10 +51,11 @@ namespace NihongoHub.Models.Dtos.Requests
         public required string meaning {get;set;}
         public string? note {get;set;}
 
-        public Entities.Word DataWordTo(int userId)
+        public Entities.Word ToWordEntity(int userId)
         {
             return new Entities.Word()
             {
+                id = id,
                 userid = userId,
                 kannji = kannji,
                 kana = kana,
@@ -62,7 +63,7 @@ namespace NihongoHub.Models.Dtos.Requests
                 meaning = meaning,
                 note = note,
                 updatedat = DateTime.UtcNow
-            }
+            };
         }
     }
     public class UpdateWordRequest : ApiRequest<UpdateWordRequestData>;

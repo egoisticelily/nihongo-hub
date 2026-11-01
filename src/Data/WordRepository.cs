@@ -70,7 +70,7 @@ namespace NihongoHub.Data
                     return false;
                 }
 
-                _word.createdat = word.createdat;
+                word.createdat = _word.createdat;
 
                 if (!Init.DatabaseInit.Current.Words.Update(word))
                 {
