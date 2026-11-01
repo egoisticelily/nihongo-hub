@@ -18,11 +18,11 @@ namespace NihongoHub.Init
             }
         }
 
-        public LiteDB.ILiteCollection<Models.Entities.WordBook> WordBooks
+        public LiteDB.ILiteCollection<Models.Entities.VocabularyNotebook> VocabularyNotebooks
         {
             get
             {
-                return _database.GetCollection<Models.Entities.WordBook>("tanngocyou");
+                return _database.GetCollection<Models.Entities.VocabularyNotebook>("tanngocyou");
             }
         }
 

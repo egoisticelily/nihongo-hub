@@ -2,7 +2,7 @@
 
 namespace NihongoHub.Models.Dtos.Responses
 {
-    public class WordBookSummaryResponseData
+    public class VocabularyNotebookSummaryResponseData
     {
         public required int id {get;set;}
         public required string name {get;set;}
@@ -13,5 +13,5 @@ namespace NihongoHub.Models.Dtos.Responses
         public required DateTime updatedat {get;set;}
     }
 
-    public class WordBookSummaryResponse : ApiResponse<WordBookSummaryResponseData>;
+    public class VocabularyNotebookSummaryResponse : ApiResponse<VocabularyNotebookSummaryResponseData>;
 }

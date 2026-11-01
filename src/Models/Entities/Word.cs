@@ -19,7 +19,7 @@ namespace NihongoHub.Models.Entities
         public int? akusennto {get;set;} //音调(アクセント)
         public required string meaning {get;set;} //词义
         public string? note {get;set;} //备注
-        public required DateTime createdat {get;set;} //UTC
+        public DateTime createdat {get;set;} //UTC
         public required DateTime updatedat {get;set;} //UTC
     }
     
@@ -28,14 +28,14 @@ namespace NihongoHub.Models.Entities
     /// tags 属于单词本(如 "N2"),单词本身没有 tag
     /// </summary>
 
-    public class WordBook
+    public class VocabularyNotebook
     {
         [BsonId]
         public int id {set;get;}
         public required int userid {set;get;}
         public required string name {get;set;}
         public string? note {get;set;} //表示用户的标记
-        public required List<int> tangoidlist {get;set;} //表示包含单词的id
+        public required List<int> tanngoidlist {get;set;} //表示包含单词的id
         public required List<string> tags {get;set;} //供前端使用的tag
         public required DateTime createdat {get;set;} //UTC
         public required DateTime updatedat {get;set;} //UTC

@@ -31,6 +31,7 @@ namespace NihongoHub.Data
         public static bool Insert(Models.Entities.Word word,ref string errorMessage,ref Logging.LogCategory errorCategory)
         {
             errorMessage = "";
+            errorCategory = Logging.LogCategory.None;
 
             try
             {
@@ -57,8 +58,20 @@ namespace NihongoHub.Data
         public static bool Update(Models.Entities.Word word,ref string errorMessage,ref Logging.LogCategory errorCategory)
         {
             errorMessage = "";
+            errorCategory = Logging.LogCategory.None;
             try
             {
+                var _word = FindWordById(word.id);
+
+                if(_word == null)
+                {
+                    errorMessage = "单词不存在";
+                    errorCategory = Logging.LogCategory.Database;
+                    return false;
+                }
+
+                _word.createdat = word.createdat;
+
                 if (!Init.DatabaseInit.Current.Words.Update(word))
                 {
                     errorMessage = "未能更改单词数据(可能是单词不存在)";

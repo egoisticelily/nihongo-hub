@@ -40,10 +40,6 @@ namespace NihongoHub.Init{
             static void ConfigureKestrel(KestrelServerOptions options) {
                 var server = NihongoHub.Init.ConfigInit.Current.Server;
                 
-                if(server == null)
-                {
-                    NihongoHub.Logging.LogReporter.Fatal("Current配置存在问题",Logging.LogCategory.Unknown);
-                }
 
                 if (!System.Net.IPAddress.TryParse(server.Host, out var address))
                 {
