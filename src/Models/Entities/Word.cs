@@ -19,7 +19,7 @@ namespace NihongoHub.Models.Entities
         public int? akusennto {get;set;} //音调(アクセント)
         public required string meaning {get;set;} //词义
         public string? note {get;set;} //备注
-        public DateTime createdat {get;set;} //UTC
+        public required DateTime createdat {get;set;} //UTC
         public required DateTime updatedat {get;set;} //UTC
     }
     

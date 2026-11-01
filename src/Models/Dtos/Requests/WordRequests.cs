@@ -42,6 +42,13 @@ namespace NihongoHub.Models.Dtos.Requests
     }
     public class CreateWordRequest : ApiRequest<CreateWordRequestData>;
 
+    public class CreateWordsRequestData
+    {
+        public required List<CreateWordRequestData> words {get;set;}
+    }
+
+    public class CreateWordsRequest : ApiRequest<CreateWordsRequestData>;
+
     public class UpdateWordRequestData
     {
         public required int id {get;set;}
@@ -51,7 +58,7 @@ namespace NihongoHub.Models.Dtos.Requests
         public required string meaning {get;set;}
         public string? note {get;set;}
 
-        public Entities.Word ToWordEntity(int userId)
+        public Entities.Word ToWordEntity(int userId,DateTime createDat)
         {
             return new Entities.Word()
             {
@@ -62,9 +69,31 @@ namespace NihongoHub.Models.Dtos.Requests
                 akusennto = akusennto,
                 meaning = meaning,
                 note = note,
+                createdat = createDat,
                 updatedat = DateTime.UtcNow
             };
         }
     }
     public class UpdateWordRequest : ApiRequest<UpdateWordRequestData>;
+
+    public class UpdateWordsRequestData
+    {
+        public required List<UpdateWordRequestData> words {get;set;}
+    }
+    
+    public class UpdateWordsRequest : ApiRequest<UpdateWordsRequestData>;
+
+    public class DeleteWordRequestData
+    {
+        public required int id {get;set;}
+    }
+
+
+    public class DeleteWordRequest : ApiRequest<DeleteWordRequestData>;
+
+    public class DeleteWordsRequestData
+    {
+        public required List<DeleteWordRequestData> words {get;set;}
+    }
+    public class DeleteWordsRequest : ApiRequest<DeleteWordsRequestData>;
 }

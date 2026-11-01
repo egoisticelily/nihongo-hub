@@ -28,7 +28,7 @@ namespace NihongoHub.Data
             return wordList;
         }
 
-        public static bool Insert(Models.Entities.Word word,ref string errorMessage,ref Logging.LogCategory errorCategory)
+        public static bool Insert(Models.Entities.Word word,out string errorMessage,out Logging.LogCategory errorCategory)
         {
             errorMessage = "";
             errorCategory = Logging.LogCategory.None;
@@ -55,26 +55,48 @@ namespace NihongoHub.Data
             }
             return true;
         }
-        public static bool Update(Models.Entities.Word word,ref string errorMessage,ref Logging.LogCategory errorCategory)
+        public static bool Update(Models.Entities.Word word,out string errorMessage,out Logging.LogCategory errorCategory)
         {
             errorMessage = "";
             errorCategory = Logging.LogCategory.None;
             try
             {
-                var _word = FindWordById(word.id);
-
-                if(_word == null)
-                {
-                    errorMessage = "单词不存在";
-                    errorCategory = Logging.LogCategory.Database;
-                    return false;
-                }
-
-                word.createdat = _word.createdat;
-
                 if (!Init.DatabaseInit.Current.Words.Update(word))
                 {
                     errorMessage = "未能更改单词数据(可能是单词不存在)";
+                    errorCategory = Logging.LogCategory.Database;
+                    return false;
+                }
+            }
+            catch(LiteException ex)
+            {
+                Logging.LogReporter.Report(Logging.LogCategory.Database,Logging.LogLevel.Error,"[ERROR]修改单词时数据库错误",ex);
+
+                errorMessage="修改单词时数据库错误";
+                errorCategory = Logging.LogCategory.Database;
+                return false;
+            }
+            catch(Exception ex)
+            {
+                Logging.LogReporter.Report(Logging.LogCategory.Database,Logging.LogLevel.Error,"[ERROR]修改单词时发生未知错误",ex);
+
+                errorMessage="修改单词时发生未知错误";
+                errorCategory = Logging.LogCategory.Unknown;
+                return false;
+            }
+            return true;
+        }
+
+        public static bool Delete(int id,out string errorMessage,out Logging.LogCategory errorCategory)
+        {
+            errorMessage = "";
+            errorCategory = Logging.LogCategory.None;
+
+            try
+            {
+                if (!Init.DatabaseInit.Current.Words.Delete(id))
+                {
+                    errorMessage = "未能删除单词数据(可能是单词不存在)";
                     errorCategory = Logging.LogCategory.Database;
                     return false;
                 }
