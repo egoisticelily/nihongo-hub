@@ -16,16 +16,60 @@ namespace NihongoHub.Services
 
     public static class WordService
     {
-        public static List<Models.Entities.Word> FindWordsByIds(List<int> wordIds,out List<int> missingIds)
+        public static List<Models.Entities.Word> FindWordsByIds(List<int> wordIds,int userId,out List<WordOperationFailure> failures)
         {
-            var wordList =  Data.WordRepository.FindWordsByIds(wordIds,missingIds = new());
-            
-            return wordList;
+            List<Models.Entities.Word> words = new();
+            failures = new();
+            string errorMessage = "";
+            Logging.LogCategory errorCategory = Logging.LogCategory.None;
+            Models.Entities.Word? word = null;
+
+            foreach(var id in wordIds)
+            {
+                if(!Data.WordRepository.FindWordById(id,out word,out errorMessage,out errorCategory))
+                {
+                    failures.Add(new(errorMessage,errorCategory,id));
+                    continue;
+                }
+                if(word == null)
+                {
+                    failures.Add(new($"单词不存在",errorCategory,id));
+                    continue;
+                }
+
+                if(word.userid != userId)
+                {
+                    failures.Add(new($"该单词不属于该用户",Logging.LogCategory.None,id));
+                    continue;
+                }
+
+                words.Add(word);
+            }
+            return words;
         }
 
-        public static Models.Entities.Word? FindWordById(int wordId)
+        public static Models.Entities.Word? FindWordById(int wordId,int userId,out WordOperationFailure? failure)
         {
-            var word = Data.WordRepository.FindWordById(wordId);
+            string errorMessage = "";
+            Logging.LogCategory errorCategory = Logging.LogCategory.None;
+            Models.Entities.Word? word = null;
+            failure = null;
+
+            if(!Data.WordRepository.FindWordById(wordId,out word,out errorMessage,out errorCategory))
+            {
+                failure = new(errorMessage,errorCategory,wordId);
+                return null;
+            }
+            if(word == null)
+            {
+                failure = new($"单词不存在",Logging.LogCategory.None,wordId);
+                return null;
+            }
+            if(word.userid != userId)
+            {
+                failure = new($"该单词不属于该用户",Logging.LogCategory.None,wordId);
+                return null;
+            }
 
             return word;
         }
@@ -75,13 +119,13 @@ namespace NihongoHub.Services
                 var _word = Data.WordRepository.FindWordById(word.id);
                 if(_word == null)
                 {
-                    failures.Add(new($"该单词不存在",Logging.LogCategory.Unknown,word.id)); //这不算数据库错误，而是用户自己传入错误
+                    failures.Add(new($"该单词不存在",Logging.LogCategory.None,word.id)); //这不算数据库错误，而是用户自己传入错误
                     continue;
                 }
 
                 if(_word.userid != userId)
                 {
-                    failures.Add(new($"该单词不属于该用户",Logging.LogCategory.Unknown,word.id));
+                    failures.Add(new($"该单词不属于该用户",Logging.LogCategory.None,word.id));
                     continue;
                 }
 
@@ -103,12 +147,12 @@ namespace NihongoHub.Services
 
             if(_word == null)
             {
-                return new($"该单词不存在",Logging.LogCategory.Unknown,word.id);
+                return new($"该单词不存在",Logging.LogCategory.None,word.id);
             }
 
             if(_word.userid != userId)
             {
-                return new($"该单词不属于该用户",Logging.LogCategory.Unknown,word.id);
+                return new($"该单词不属于该用户",Logging.LogCategory.None,word.id);
             }
 
             if(!Data.WordRepository.Update(word.ToWordEntity(userId,_word.createdat),out errorMessage,out errorCategory))
@@ -117,6 +161,13 @@ namespace NihongoHub.Services
             }
             return null;
         }
+
+        /// <summary>
+        /// 还没有写同步删除单词本的Data部分代码，后续写完后这里需要补上相关逻辑
+        /// </summary>
+        /// <param name="words"></param>
+        /// <param name="userID"></param>
+        /// <returns></returns>
 
         public static List<WordOperationFailure> DeleteWords(Models.Dtos.Requests.DeleteWordsRequestData words,int userID)
         {
@@ -130,13 +181,13 @@ namespace NihongoHub.Services
 
                 if(_word == null)
                 {
-                    failures.Add(new($"该单词不存在",Logging.LogCategory.Unknown,word.id));
+                    failures.Add(new($"该单词不存在",Logging.LogCategory.None,word.id));
                     continue;
                 }
 
                 if(_word.userid != userID)
                 {
-                    failures.Add(new($"该单词不属于该用户",Logging.LogCategory.Unknown,word.id));
+                    failures.Add(new($"该单词不属于该用户",Logging.LogCategory.None,word.id));
                     continue;
                 }
 
@@ -157,12 +208,12 @@ namespace NihongoHub.Services
 
             if(_word == null)
             {
-                return new($"该单词不存在",Logging.LogCategory.Unknown,word.id);
+                return new($"该单词不存在",Logging.LogCategory.None,word.id);
             }
 
             if(_word.userid != userID)
             {
-                return new($"该单词不属于该用户",Logging.LogCategory.Unknown,word.id);
+                return new($"该单词不属于该用户",Logging.LogCategory.None,word.id);
             }
 
             if(!Data.WordRepository.Delete(word.id,out errorMessage,out errorCategory))

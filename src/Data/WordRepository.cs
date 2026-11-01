@@ -4,28 +4,47 @@ namespace NihongoHub.Data
 {
     public static class WordRepository
     {
+        public static bool FindWordById(int id,out Models.Entities.Word? word,out string errorMessage,out Logging.LogCategory errorCategory)
+        {
+            errorMessage = "";
+            errorCategory = Logging.LogCategory.None;
+
+            try
+            {
+                word = Init.DatabaseInit.Current.Words.FindById(id);
+            }
+            catch(LiteException ex)
+            {
+                Logging.LogReporter.Report(Logging.LogCategory.Database,Logging.LogLevel.Error,"[ERROR]查询单词时数据库错误",ex);
+
+                word = null;
+                errorMessage=  "查询单词时数据库错误";
+                errorCategory = Logging.LogCategory.Database;
+                return false;
+            }
+            catch(Exception ex)
+            {
+                Logging.LogReporter.Report(Logging.LogCategory.Database,Logging.LogLevel.Error,"[ERROR]查询单词时发生未知错误",ex);
+
+                word = null;
+                errorMessage="查询单词时发生未知错误";
+                errorCategory = Logging.LogCategory.Unknown;
+                return false;
+            }
+            return true;
+        }
+        /// <summary>
+        /// 仅供Services快捷调用
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public static Models.Entities.Word? FindWordById(int id)
         {
-            return Init.DatabaseInit.Current.Words.FindById(id);
-        }
-        public static List<Models.Entities.Word> FindWordsByIds(List<int> ids, List<int> missingIds)
-        {
-            missingIds.Clear();
-
-            List<Models.Entities.Word> wordList = new();
-
-            foreach (int id in ids)
+            if (!FindWordById(id, out var word, out _, out _))
             {
-                var word =  Init.DatabaseInit.Current.Words.FindById(id);
-                if (word == null)
-                {
-                    missingIds.Add(id);
-                    continue;
-                }
-                wordList.Add(word);
+                return null;
             }
-
-            return wordList;
+            return word;
         }
 
         public static bool Insert(Models.Entities.Word word,out string errorMessage,out Logging.LogCategory errorCategory)
@@ -105,7 +124,7 @@ namespace NihongoHub.Data
             {
                 Logging.LogReporter.Report(Logging.LogCategory.Database,Logging.LogLevel.Error,"[ERROR]修改单词时数据库错误",ex);
 
-                errorMessage="修改单词时数据库错误";
+                errorMessage="删除单词时数据库错误";
                 errorCategory = Logging.LogCategory.Database;
                 return false;
             }
@@ -113,7 +132,7 @@ namespace NihongoHub.Data
             {
                 Logging.LogReporter.Report(Logging.LogCategory.Database,Logging.LogLevel.Error,"[ERROR]修改单词时发生未知错误",ex);
 
-                errorMessage="修改单词时发生未知错误";
+                errorMessage="删除单词时发生未知错误";
                 errorCategory = Logging.LogCategory.Unknown;
                 return false;
             }
