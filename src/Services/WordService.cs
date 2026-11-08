@@ -216,6 +216,13 @@ namespace NihongoHub.Services
                 return new($"该单词不属于该用户",Logging.LogCategory.None,word.id);
             }
 
+            var DeleteNotebooksInWordFailure = VocabularyNotebookService.DeleteWord(word.id);
+
+            if(DeleteNotebooksInWordFailure.Count() != 0)
+            {
+                return new($"更新包含单词的单词本时出现问题",Logging.LogCategory.None,word.id);
+            }
+
             if(!Data.WordRepository.Delete(word.id,out errorMessage,out errorCategory))
             {
                 return new(errorMessage,errorCategory,word.id);

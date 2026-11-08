@@ -11,7 +11,6 @@ namespace NihongoHub.Models.Dtos.Requests
     }
     public class SearchWordsRequest : ApiRequest<SearchWordsRequestData>;
 
-
     public class CreateWordRequestData
     {
         public string? kannji {get;set;}
