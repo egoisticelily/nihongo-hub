@@ -61,9 +61,9 @@ namespace NihongoHub.Data
             
                 foreach(var word in userWords)
                 {
-                    if(word.kannji != null && word.kannji.Contains(query) ||
-                        word.kana.Contains(query) ||
-                        word.meaning.Contains(query)
+                    if(word.kannji != null && word.kannji.Contains(query, StringComparison.Ordinal) ||
+                        word.kana.Contains(query,StringComparison.Ordinal) ||
+                        word.meaning.Contains(query,StringComparison.Ordinal)
                     )
                     {
                         words.Add(word);

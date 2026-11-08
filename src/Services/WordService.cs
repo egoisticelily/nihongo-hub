@@ -96,7 +96,7 @@ namespace NihongoHub.Services
                 return new();
             }
 
-            return words;
+            return SortWordsByRelevance(words, query);
         }
 
         public static List<WordOperationFailure> CreateWords(Models.Dtos.Requests.CreateWordsRequestData words,int userId)
@@ -296,23 +296,19 @@ namespace NihongoHub.Services
             public Models.Entities.Word Word {get;}
         }
         private static List<Models.Entities.Word> SortWordsByRelevance(List<Models.Entities.Word> words,string query)
-        {
+        {   
             List<WordMatchResult> wordMatches = new();
-            List<(double matchRatio, int matchPosition)> fieldMatches = new();
-            bool isExactMatch = false;
-            bool isKanaMatch = false;
-            bool isMeaningMatch = false;
 
             foreach(var word in words)
             {
-                isExactMatch = (word.kannji != null && word.kannji == query) ||
+
+                List<(double matchRatio, int matchPosition)> fieldMatches = new();
+                bool isExactMatch = (word.kannji != null && word.kannji == query) ||
                     word.kana == query ||
                     word.meaning == query;
 
-                
-
-                isKanaMatch = word.kana.Contains(query,StringComparison.Ordinal);
-                isMeaningMatch = word.meaning.Contains(query,StringComparison.Ordinal);
+                bool isKanaMatch = word.kana.Contains(query,StringComparison.Ordinal);
+                bool isMeaningMatch = word.meaning.Contains(query,StringComparison.Ordinal);
 
                 if (word.kannji != null && word.kannji.Contains(query,StringComparison.Ordinal))
                 {
