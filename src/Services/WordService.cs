@@ -281,9 +281,8 @@ namespace NihongoHub.Services
         
         private class WordMatchResult
         {
-            public WordMatchResult(int wordID,bool exactMatch,double matchRatio,int matchPosition,Models.Entities.Word word)
+            public WordMatchResult(bool exactMatch,double matchRatio,int matchPosition,Models.Entities.Word word)
             {
-                WordId = wordID;
                 IsExactMatch = exactMatch;
                 MatchRatio = matchRatio;
                 MatchPosition = matchPosition;
@@ -346,7 +345,6 @@ namespace NihongoHub.Services
                     .First();
 
                 wordMatches.Add(new(
-                    word.id,
                     isExactMatch,
                     bestMatch.matchRatio,
                     bestMatch.matchPosition,
