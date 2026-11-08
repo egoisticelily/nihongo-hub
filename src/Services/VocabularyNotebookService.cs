@@ -205,8 +205,8 @@ namespace NihongoHub.Services
             foreach(var log in failures)
             {
                 ++errorNumer;
-                Logging.LogCategory category = log.errorCategory == null ? Logging.LogCategory.None : (Logging.LogCategory)log.errorCategory;
-                Logging.LogReporter.Report(category,Logging.LogLevel.Error,$"[wordID - {wordID}][No.{errorNumer}] - {errorMessage}");
+                Logging.LogCategory category = log.errorCategory ?? Logging.LogCategory.None;
+                Logging.LogReporter.Report(category,Logging.LogLevel.Error,$"[wordID - {wordID}] [No.{errorNumer}] - {log.errorMessage}");
             }
             
             return failures;

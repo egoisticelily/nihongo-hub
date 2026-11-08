@@ -169,13 +169,6 @@ namespace NihongoHub.Services
             return null;
         }
 
-        /// <summary>
-        /// 还没有写同步删除单词本的Data部分代码，后续写完后这里需要补上相关逻辑
-        /// </summary>
-        /// <param name="words"></param>
-        /// <param name="userID"></param>
-        /// <returns></returns>
-
         public static List<WordOperationFailure> DeleteWords(Models.Dtos.Requests.DeleteWordsRequestData words,int userID)
         {
             List<WordOperationFailure> failures = new();
@@ -206,7 +199,7 @@ namespace NihongoHub.Services
 
                 if(DeleteNotebooksInWordFailure.Count() != 0)
                 {
-                    failures.Add(new($"更新包含单词的单词本时出现问题",Logging.LogCategory.Database,word.id));
+                    failures.Add(new($"更新包含单词的单词本时出现问题 - 详细请查看后台日志，如果您是管理员，可以尝试自行修复，否则，建议您联系管理员",DeleteNotebooksInWordFailure[0].errorCategory,word.id));
                     continue;
                 }
 
@@ -242,7 +235,7 @@ namespace NihongoHub.Services
 
             if(DeleteNotebooksInWordFailure.Count() != 0)
             {
-                return new($"更新包含单词的单词本时出现问题",Logging.LogCategory.Database,word.id);
+                return new($"更新包含单词的单词本时出现问题 - 详细请查看后台日志，如果您是管理员，可以尝试自行修复，否则，建议您联系管理员",DeleteNotebooksInWordFailure[0].errorCategory,word.id);
             }
 
             if(!Data.WordRepository.Delete(word.id,out errorMessage,out errorCategory))

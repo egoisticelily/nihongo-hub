@@ -15,19 +15,19 @@ namespace NihongoHub.Data
             }
             catch(LiteException ex)
             {
-                Logging.LogReporter.Report(Logging.LogCategory.Database,Logging.LogLevel.Error,"[ERROR]查询单词时数据库错误",ex);
+                Logging.LogReporter.Report(Logging.LogCategory.Database,Logging.LogLevel.Error,"[ERROR]查询单词本时数据库错误",ex);
 
                 vocabularyNotebook = null;
-                errorMessage=  "查询单词时数据库错误";
+                errorMessage=  "查询单词本时数据库错误";
                 errorCategory = Logging.LogCategory.Database;
                 return false;
             }
             catch(Exception ex)
             {
-                Logging.LogReporter.Report(Logging.LogCategory.Database,Logging.LogLevel.Error,"[ERROR]查询单词时发生未知错误",ex);
+                Logging.LogReporter.Report(Logging.LogCategory.Database,Logging.LogLevel.Error,"[ERROR]查询单词本时发生未知错误",ex);
 
                 vocabularyNotebook = null;
-                errorMessage="查询单词时发生未知错误";
+                errorMessage="查询单词本时发生未知错误";
                 errorCategory = Logging.LogCategory.Unknown;
                 return false;
             }
@@ -147,7 +147,7 @@ namespace NihongoHub.Data
             {
                 if (!Init.DatabaseInit.Current.VocabularyNotebooks.Delete(id))
                 {
-                    errorMessage = "未能删除单词本数据(可能是单词不存在)";
+                    errorMessage = "未能删除单词本数据(可能是单词本不存在)";
                     errorCategory = Logging.LogCategory.Database;
                     return false;
                 }

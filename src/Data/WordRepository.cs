@@ -122,7 +122,7 @@ namespace NihongoHub.Data
             }
             catch(LiteException ex)
             {
-                Logging.LogReporter.Report(Logging.LogCategory.Database,Logging.LogLevel.Error,"[ERROR]修改单词时数据库错误",ex);
+                Logging.LogReporter.Report(Logging.LogCategory.Database,Logging.LogLevel.Error,"[ERROR]删除单词时数据库错误",ex);
 
                 errorMessage="删除单词时数据库错误";
                 errorCategory = Logging.LogCategory.Database;
@@ -130,7 +130,7 @@ namespace NihongoHub.Data
             }
             catch(Exception ex)
             {
-                Logging.LogReporter.Report(Logging.LogCategory.Database,Logging.LogLevel.Error,"[ERROR]修改单词时发生未知错误",ex);
+                Logging.LogReporter.Report(Logging.LogCategory.Database,Logging.LogLevel.Error,"[ERROR]删除单词时发生未知错误",ex);
 
                 errorMessage="删除单词时发生未知错误";
                 errorCategory = Logging.LogCategory.Unknown;
