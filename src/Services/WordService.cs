@@ -1,3 +1,5 @@
+using System.Net;
+
 namespace NihongoHub.Services
 {
     public class WordOperationFailure
@@ -72,6 +74,29 @@ namespace NihongoHub.Services
             }
 
             return word;
+        }
+
+        public static List<Models.Entities.Word> FindWordsByQuery(string query,int userID, out WordOperationFailure? failure)
+        {
+            string errorMessage = "";
+            Logging.LogCategory errorCategory = Logging.LogCategory.None;
+            List<Models.Entities.Word> words = new();
+            failure = null;
+
+            if(string.IsNullOrWhiteSpace(query)){
+                failure = new($"不允许查询值为空",Logging.LogCategory.Unknown);
+                return new();
+            }
+            //去掉空白
+            query = query.Trim();
+
+            if (!Data.WordRepository.FindWordsByQuery(query,userID,out words,out errorMessage,out errorCategory))
+            {
+                failure = new(errorMessage,errorCategory);
+                return new();
+            }
+
+            return words;
         }
 
         public static List<WordOperationFailure> CreateWords(Models.Dtos.Requests.CreateWordsRequestData words,int userId)
@@ -205,7 +230,11 @@ namespace NihongoHub.Services
 
                 if (!Data.WordRepository.Delete(word.id,out errorMessage,out errorCategory))
                 {
-                    failures.Add(new(errorMessage,errorCategory,word.id));
+                    failures.Add(new(
+                        $"{errorMessage} - 单词本关联已经被清理，但单词本身删除失败。 \n 该单词本身可能已不属于任何单词本，请尝试重新删除 \n 如果再次操作仍然失误，如果您是管理员，您可以尝试自行修复。否则，建议您联系管理员。",
+                        errorCategory,
+                        word.id
+                    ));
                 }
             }
             return failures;
@@ -240,10 +269,104 @@ namespace NihongoHub.Services
 
             if(!Data.WordRepository.Delete(word.id,out errorMessage,out errorCategory))
             {
-                return new(errorMessage,errorCategory,word.id);
+                return new(
+                    $"{errorMessage} - 单词本关联已经被清理，但单词本身删除失败。 \n 该单词本身可能已不属于任何单词本，请尝试重新删除 \n 如果再次操作仍然失误，如果您是管理员，您可以尝试自行修复。否则，建议您联系管理员。",
+                    errorCategory,
+                    word.id
+                );
             }
 
             return null;
+        }
+        
+        private class WordMatchResult
+        {
+            public WordMatchResult(int wordID,bool exactMatch,double matchRatio,int matchPosition,Models.Entities.Word word)
+            {
+                WordId = wordID;
+                IsExactMatch = exactMatch;
+                MatchRatio = matchRatio;
+                MatchPosition = matchPosition;
+                Word = word;
+            }
+            public int WordId {get;}
+            public bool IsExactMatch {get;}
+            public double MatchRatio {get;}
+            public int MatchPosition {get;}
+            public Models.Entities.Word Word {get;}
+        }
+        private static List<Models.Entities.Word> SortWordsByRelevance(List<Models.Entities.Word> words,string query)
+        {
+            List<WordMatchResult> wordMatches = new();
+            List<(double matchRatio, int matchPosition)> fieldMatches = new();
+            bool isExactMatch = false;
+            bool isKanaMatch = false;
+            bool isMeaningMatch = false;
+
+            foreach(var word in words)
+            {
+                isExactMatch = (word.kannji != null && word.kannji == query) ||
+                    word.kana == query ||
+                    word.meaning == query;
+
+                
+
+                isKanaMatch = word.kana.Contains(query,StringComparison.Ordinal);
+                isMeaningMatch = word.meaning.Contains(query,StringComparison.Ordinal);
+
+                if (word.kannji != null && word.kannji.Contains(query,StringComparison.Ordinal))
+                {
+                    fieldMatches.Add(
+                        (
+                            (double)query.Length / word.kannji.Length,
+                            word.kannji.IndexOf(query,StringComparison.Ordinal)
+                        )
+                    );
+                }
+                
+                if(isKanaMatch)
+                {
+                    fieldMatches.Add(
+                        (
+                            (double)query.Length / word.kana.Length,
+                            word.kana.IndexOf(query,StringComparison.Ordinal)
+                        )
+                    );
+                }
+                
+                if(isMeaningMatch)
+                {
+                    fieldMatches.Add(
+                        (
+                            (double)query.Length / word.meaning.Length,
+                            int.MaxValue
+                        )
+                    );
+                }
+
+                var bestMatch = fieldMatches
+                    .OrderByDescending(x => x.matchRatio)
+                    .ThenBy(x => x.matchPosition)
+                    .First();
+
+                wordMatches.Add(new(
+                    word.id,
+                    isExactMatch,
+                    bestMatch.matchRatio,
+                    bestMatch.matchPosition,
+                    word
+                ));
+            }
+
+            //排序
+            var sortedWords = wordMatches
+            .OrderByDescending(x => x.IsExactMatch)
+            .ThenByDescending(x => x.MatchRatio)
+            .ThenBy(x => x.MatchPosition)
+            .ThenBy(x => x.WordId)
+            .ToList();
+
+            return sortedWords.Select(x => x.Word).ToList();
         }
     }
 }
