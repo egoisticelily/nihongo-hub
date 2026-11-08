@@ -116,7 +116,11 @@ namespace NihongoHub.Services
 
             foreach (var word in words.words)
             {
-                var _word = Data.WordRepository.FindWordById(word.id);
+                if(!Data.WordRepository.FindWordById(word.id,out var _word,out errorMessage,out errorCategory))
+                {
+                    failures.Add(new(errorMessage,errorCategory,word.id));
+                    continue;
+                }
                 if(_word == null)
                 {
                     failures.Add(new($"该单词不存在",Logging.LogCategory.None,word.id)); //这不算数据库错误，而是用户自己传入错误
@@ -143,7 +147,10 @@ namespace NihongoHub.Services
             string errorMessage = "";
             Logging.LogCategory errorCategory = Logging.LogCategory.None;
 
-            var _word = Data.WordRepository.FindWordById(word.id);
+            if(!Data.WordRepository.FindWordById(word.id,out var _word,out errorMessage,out errorCategory))
+            {
+                return new(errorMessage,errorCategory,word.id);
+            }
 
             if(_word == null)
             {
@@ -177,7 +184,11 @@ namespace NihongoHub.Services
             
             foreach(var word in words.words)
             {
-                var _word = Data.WordRepository.FindWordById(word.id);
+                if(!Data.WordRepository.FindWordById(word.id,out var _word,out errorMessage,out errorCategory))
+                {
+                    failures.Add(new(errorMessage,errorCategory,word.id));
+                    continue;
+                }
 
                 if(_word == null)
                 {
@@ -188,6 +199,14 @@ namespace NihongoHub.Services
                 if(_word.userid != userID)
                 {
                     failures.Add(new($"该单词不属于该用户",Logging.LogCategory.None,word.id));
+                    continue;
+                }
+
+                var DeleteNotebooksInWordFailure = VocabularyNotebookService.RemoveWordFromNotebooks(word.id);
+
+                if(DeleteNotebooksInWordFailure.Count() != 0)
+                {
+                    failures.Add(new($"更新包含单词的单词本时出现问题",Logging.LogCategory.Database,word.id));
                     continue;
                 }
 
@@ -204,7 +223,10 @@ namespace NihongoHub.Services
             string errorMessage = "";
             Logging.LogCategory errorCategory = Logging.LogCategory.None;
 
-            var _word = Data.WordRepository.FindWordById(word.id);
+            if(!Data.WordRepository.FindWordById(word.id,out var _word,out errorMessage,out errorCategory))
+            {
+                return new(errorMessage,errorCategory,word.id);
+            }
 
             if(_word == null)
             {
@@ -216,11 +238,11 @@ namespace NihongoHub.Services
                 return new($"该单词不属于该用户",Logging.LogCategory.None,word.id);
             }
 
-            var DeleteNotebooksInWordFailure = VocabularyNotebookService.DeleteWord(word.id);
+            var DeleteNotebooksInWordFailure = VocabularyNotebookService.RemoveWordFromNotebooks(word.id);
 
             if(DeleteNotebooksInWordFailure.Count() != 0)
             {
-                return new($"更新包含单词的单词本时出现问题",Logging.LogCategory.None,word.id);
+                return new($"更新包含单词的单词本时出现问题",Logging.LogCategory.Database,word.id);
             }
 
             if(!Data.WordRepository.Delete(word.id,out errorMessage,out errorCategory))

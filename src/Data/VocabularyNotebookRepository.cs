@@ -48,7 +48,7 @@ namespace NihongoHub.Data
             return vocabularyNotebook;
         }
 
-        public static bool FindVocabularyNotebookByWordId(int wordID,out List<Models.Entities.VocabularyNotebook> noteBooks,out string errorMessage,out Logging.LogCategory errorCategory)
+        public static bool FindVocabularyNotebooksByWordId(int wordID,out List<Models.Entities.VocabularyNotebook> noteBooks,out string errorMessage,out Logging.LogCategory errorCategory)
         {
             errorMessage = "";
             errorCategory = Logging.LogCategory.None;
@@ -59,19 +59,19 @@ namespace NihongoHub.Data
             }
             catch(LiteException ex)
             {
-                Logging.LogReporter.Report(Logging.LogCategory.Database,Logging.LogLevel.Error,"[ERROR]查询单词时数据库错误",ex);
+                Logging.LogReporter.Report(Logging.LogCategory.Database,Logging.LogLevel.Error,"[ERROR]查询单词本时数据库错误",ex);
 
                 noteBooks = new();
-                errorMessage=  "查询单词时数据库错误";
+                errorMessage=  "查询单词本时数据库错误";
                 errorCategory = Logging.LogCategory.Database;
                 return false;
             }
             catch(Exception ex)
             {
-                Logging.LogReporter.Report(Logging.LogCategory.Database,Logging.LogLevel.Error,"[ERROR]查询单词时发生未知错误",ex);
+                Logging.LogReporter.Report(Logging.LogCategory.Database,Logging.LogLevel.Error,"[ERROR]查询单词本时发生未知错误",ex);
 
                 noteBooks = new();
-                errorMessage="查询单词时发生未知错误";
+                errorMessage="查询单词本时发生未知错误";
                 errorCategory = Logging.LogCategory.Unknown;
                 return false;
             }
@@ -147,24 +147,24 @@ namespace NihongoHub.Data
             {
                 if (!Init.DatabaseInit.Current.VocabularyNotebooks.Delete(id))
                 {
-                    errorMessage = "未能删除单词数据(可能是单词不存在)";
+                    errorMessage = "未能删除单词本数据(可能是单词不存在)";
                     errorCategory = Logging.LogCategory.Database;
                     return false;
                 }
             }
             catch(LiteException ex)
             {
-                Logging.LogReporter.Report(Logging.LogCategory.Database,Logging.LogLevel.Error,"[ERROR]修改单词时数据库错误",ex);
+                Logging.LogReporter.Report(Logging.LogCategory.Database,Logging.LogLevel.Error,"[ERROR]删除单词本时数据库错误",ex);
 
-                errorMessage="删除单词时数据库错误";
+                errorMessage="删除单词本时数据库错误";
                 errorCategory = Logging.LogCategory.Database;
                 return false;
             }
             catch(Exception ex)
             {
-                Logging.LogReporter.Report(Logging.LogCategory.Database,Logging.LogLevel.Error,"[ERROR]修改单词时发生未知错误",ex);
+                Logging.LogReporter.Report(Logging.LogCategory.Database,Logging.LogLevel.Error,"[ERROR]删除单词本时发生未知错误",ex);
 
-                errorMessage="删除单词时发生未知错误";
+                errorMessage="删除单词本时发生未知错误";
                 errorCategory = Logging.LogCategory.Unknown;
                 return false;
             }

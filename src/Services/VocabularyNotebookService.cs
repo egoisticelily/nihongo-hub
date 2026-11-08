@@ -18,7 +18,7 @@ namespace NihongoHub.Services
 
     public static class VocabularyNotebookService
     {
-        public static List<Models.Entities.VocabularyNotebook> FindVocabularyNotebookByIds(List<int> ids,int userID,out List<VocabularyNotebookOperationFailure> failures)
+        public static List<Models.Entities.VocabularyNotebook> FindVocabularyNotebooksByIds(List<int> ids,int userID,out List<VocabularyNotebookOperationFailure> failures)
         {
             List<Models.Entities.VocabularyNotebook> notebooks = new();
             failures = new();
@@ -73,7 +73,7 @@ namespace NihongoHub.Services
             return notebook;
         }
 
-        public static VocabularyNotebookOperationFailure? CreateNotebook(Models.Dtos.Requests.CreateVocabularyNotebookRequestData noteBook,int userID)
+        public static VocabularyNotebookOperationFailure? CreateVocabularyNotebook(Models.Dtos.Requests.CreateVocabularyNotebookRequestData noteBook,int userID)
         {
             string errorMessage = "";
             Logging.LogCategory errorCategory = Logging.LogCategory.None;
@@ -85,12 +85,15 @@ namespace NihongoHub.Services
             return null;
         }
 
-        public static VocabularyNotebookOperationFailure? UpdateNotebook(Models.Dtos.Requests.UpdateVocabularyNotebookRequestData noteBook,int userID)
+        public static VocabularyNotebookOperationFailure? UpdateVocabularyNotebook(Models.Dtos.Requests.UpdateVocabularyNotebookRequestData noteBook,int userID)
         {
             string errorMessage = "";
             Logging.LogCategory errorCategory = Logging.LogCategory.None;
 
-            var _noteBook = Data.VocabularyNotebookRepository.FindVocabularyNotebookById(noteBook.id);
+            if(!Data.VocabularyNotebookRepository.FindVocabularyNotebookById(noteBook.id,out var _noteBook,out errorMessage,out errorCategory))
+            {
+                return new(errorMessage,errorCategory,noteBook.id);
+            }
 
             if(_noteBook == null)
             {
@@ -109,12 +112,15 @@ namespace NihongoHub.Services
             return null;
         }
 
-        public static VocabularyNotebookOperationFailure? DeleteNotebook(Models.Dtos.Requests.DeleteVocabularyNotebookRequestData noteBook,int userID)
+        public static VocabularyNotebookOperationFailure? DeleteVocabularyNotebook(Models.Dtos.Requests.DeleteVocabularyNotebookRequestData noteBook,int userID)
         {
             string errorMessage = "";
             Logging.LogCategory errorCategory = Logging.LogCategory.None;
 
-            var _noteBook = Data.VocabularyNotebookRepository.FindVocabularyNotebookById(noteBook.id);
+            if(!Data.VocabularyNotebookRepository.FindVocabularyNotebookById(noteBook.id,out var _noteBook,out errorMessage,out errorCategory))
+            {
+                return new(errorMessage,errorCategory,noteBook.id);
+            }
 
             if(_noteBook == null)
             {
@@ -142,7 +148,11 @@ namespace NihongoHub.Services
 
             foreach (var noteBook in noteBooks.noteBooks)
             {
-                var _noteBook = Data.VocabularyNotebookRepository.FindVocabularyNotebookById(noteBook.id);
+                if(!Data.VocabularyNotebookRepository.FindVocabularyNotebookById(noteBook.id,out var _noteBook,out errorMessage,out errorCategory))
+                {
+                    failures.Add(new(errorMessage,errorCategory,noteBook.id));
+                    continue;
+                }
 
                 if(_noteBook == null)
                 {
@@ -165,13 +175,13 @@ namespace NihongoHub.Services
             return failures;
         }
 
-        public static List<VocabularyNotebookOperationFailure> DeleteWord(int wordID)
+        public static List<VocabularyNotebookOperationFailure> RemoveWordFromNotebooks(int wordID)
         {
             string errorMessage = "";
             Logging.LogCategory errorCategory = Logging.LogCategory.None;
             List<VocabularyNotebookOperationFailure> failures = new();
 
-            if(!Data.VocabularyNotebookRepository.FindVocabularyNotebookByWordId(wordID,out var noteBooks,out errorMessage,out errorCategory))
+            if(!Data.VocabularyNotebookRepository.FindVocabularyNotebooksByWordId(wordID,out var noteBooks,out errorMessage,out errorCategory))
             {
                 failures.Add(new($"[严重错误] - 获取对应单词本时发生严重错误 \n - {errorMessage}",errorCategory,wordID));
                 return failures;
@@ -187,6 +197,16 @@ namespace NihongoHub.Services
                     failures.Add(new(errorMessage,errorCategory,noteBook.id));
                     continue;
                 }
+            }
+            
+            ///先写入log,后续再考虑其他形式
+            int errorNumer = 0;
+
+            foreach(var log in failures)
+            {
+                ++errorNumer;
+                Logging.LogCategory category = log.errorCategory == null ? Logging.LogCategory.None : (Logging.LogCategory)log.errorCategory;
+                Logging.LogReporter.Report(category,Logging.LogLevel.Error,$"[wordID - {wordID}][No.{errorNumer}] - {errorMessage}");
             }
             
             return failures;
