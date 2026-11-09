@@ -6,7 +6,7 @@ namespace NihongoHub.Services
 {
     public static class AuthService
     {
-        public static bool ValidateToken(string token, ref TokenUserData? userData,ref string errorMessage,ref string errorCode)
+        public static bool ValidateToken(string token, out TokenUserData? userData,out string errorMessage,out string errorCode)
         {
             userData = null;
             errorMessage = "";

@@ -279,6 +279,9 @@ namespace NihongoHub.Services
             return null;
         }
         
+        /// <summary>
+        /// 用于方便排序的内部class
+        /// </summary>
         private class WordMatchResult
         {
             public WordMatchResult(bool exactMatch,double matchRatio,int matchPosition,Models.Entities.Word word)
@@ -288,20 +291,23 @@ namespace NihongoHub.Services
                 MatchPosition = matchPosition;
                 Word = word;
             }
-            public int WordId {get;}
+            //是否完全匹配
             public bool IsExactMatch {get;}
+            //query占目标的比例(取最大)
             public double MatchRatio {get;}
+            //query在目标的位置顺序(Meaning除外)
             public int MatchPosition {get;}
             public Models.Entities.Word Word {get;}
         }
         private static List<Models.Entities.Word> SortWordsByRelevance(List<Models.Entities.Word> words,string query)
         {   
             List<WordMatchResult> wordMatches = new();
+            List<(double matchRatio, int matchPosition)> fieldMatches = new();
 
             foreach(var word in words)
             {
 
-                List<(double matchRatio, int matchPosition)> fieldMatches = new();
+                fieldMatches.Clear();
                 bool isExactMatch = (word.kannji != null && word.kannji == query) ||
                     word.kana == query ||
                     word.meaning == query;
@@ -331,6 +337,7 @@ namespace NihongoHub.Services
                 
                 if(isMeaningMatch)
                 {
+                    //meaning不计算位置，取最大值
                     fieldMatches.Add(
                         (
                             (double)query.Length / word.meaning.Length,
@@ -339,11 +346,12 @@ namespace NihongoHub.Services
                     );
                 }
 
+                //排序比例和位置(单个单词)
                 var bestMatch = fieldMatches
                     .OrderByDescending(x => x.matchRatio)
                     .ThenBy(x => x.matchPosition)
                     .First();
-
+                
                 wordMatches.Add(new(
                     isExactMatch,
                     bestMatch.matchRatio,
@@ -352,12 +360,12 @@ namespace NihongoHub.Services
                 ));
             }
 
-            //排序
+            //排序全部单词List
             var sortedWords = wordMatches
             .OrderByDescending(x => x.IsExactMatch)
             .ThenByDescending(x => x.MatchRatio)
             .ThenBy(x => x.MatchPosition)
-            .ThenBy(x => x.WordId)
+            .ThenBy(x => x.Word.id)
             .ToList();
 
             return sortedWords.Select(x => x.Word).ToList();
