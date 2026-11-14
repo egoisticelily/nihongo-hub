@@ -9,6 +9,17 @@ namespace NihongoHub.API
         {
             try
             {
+                if (!context.Request.HasJsonContentType())
+                {
+                    return Results.Json(new Models.Dtos.Responses.LoginResponse()
+                    {
+                        success = false,
+                        code = ApiCode.UnsupportedContentType,
+                        message = "请求有问题",
+                        data = null
+                    },statusCode:415);
+                }
+
                 var request = await context.Request.ReadFromJsonAsync<Models.Dtos.Requests.LoginRequest>();
 
                 if(request == null)
@@ -22,9 +33,9 @@ namespace NihongoHub.API
                     },statusCode:400);
                 }
 
-                if(!Services.UserService.UserVerification(request.username,request.password,out var userId,out var Role,out var errorMessage,out var errorCategory,out var code))
+                if(!Services.UserService.UserVerification(request.username,request.password,out var userId,out var Role,out _,out _,out var code))
                 {
-                    string message = "";
+                    string message = "请求处理失败";
                     switch (code)
                     {
                         case ApiCode.InvalidParameter:
@@ -36,8 +47,8 @@ namespace NihongoHub.API
                         case ApiCode.InvalidCredentials:
                             message = "用户名或密码错误";
                             break;
-                        case ApiCode.Success:
-                            message = "OK";
+                        case ApiCode.UnknownError:
+                            message = "服务器内部错误";
                             break;
                     }
                     return Results.Json(new Models.Dtos.Responses.LoginResponse()
@@ -54,7 +65,7 @@ namespace NihongoHub.API
                     {
                     success = false,
                     code = ApiCode.InternalProcessingError,
-                    message = "用户数据可能出现问题，如果您是管理员，建议您手动检查 否则，建议您通知管理员",
+                    message = "服务器内部错误",
                     data = null
                     },statusCode:500);
                 }
@@ -84,7 +95,7 @@ namespace NihongoHub.API
             }
             catch(JsonException ex)
             {
-                Logging.LogReporter.Report(Logging.LogCategory.Unknown,Logging.LogLevel.Error,"登录过程中出现未处理异常",ex);
+                Logging.LogReporter.Report(Logging.LogCategory.Json,Logging.LogLevel.Warn,"登录请求的JSON解析失败",ex);
 
                 return Results.Json(new Models.Dtos.Responses.LoginResponse()
                 {
