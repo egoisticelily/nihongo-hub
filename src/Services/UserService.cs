@@ -5,13 +5,25 @@ namespace NihongoHub.Services
 {
     public static class UserService
     {
-        public static bool ValidateUserIdentity(TokenUserData userData,out string errorMessage,out Logging.LogCategory errorCategory)
+        public static bool ValidateUserIdentity(TokenUserData userData,out string errorMessage,out Logging.LogCategory errorCategory,out int code)
         {
             errorMessage = "";
             errorCategory = Logging.LogCategory.None;
 
             if (!Data.UserRepository.FindUserById(userData.UserId,out var user,out errorMessage,out errorCategory))
             {
+                switch (errorCategory)
+                {
+                    case Logging.LogCategory.Database:
+                        code = ApiCode.DatabaseError;
+                        break;
+                    case Logging.LogCategory.Unknown:
+                        code = ApiCode.UnknownError;
+                        break;
+                    default:
+                        code = ApiCode.UnknownError;
+                        break;
+                }
                 errorMessage = $"[ERROR]服务器发生错误，请您联系管理员 \n - {errorMessage}";
                 return false;
             }
@@ -19,6 +31,7 @@ namespace NihongoHub.Services
             {
                 errorMessage = $"[INFO]该用户不存在";
                 errorCategory = Logging.LogCategory.None;
+                code = ApiCode.UserIdentityInvalid;
                 return false;
             }
 
@@ -26,6 +39,7 @@ namespace NihongoHub.Services
             {
                 errorMessage = $"[INFO]该用户被禁用";
                 errorCategory = Logging.LogCategory.None;
+                code = ApiCode.UserIdentityInvalid;
                 return false;
             }
 
@@ -33,9 +47,11 @@ namespace NihongoHub.Services
             {
                 errorMessage = $"[INFO]该用户身份不匹配";
                 errorCategory = Logging.LogCategory.None;
+                code = ApiCode.UserIdentityInvalid;
                 return false;
             }
 
+            code = ApiCode.Success;
             return true;
         }
         
@@ -55,7 +71,17 @@ namespace NihongoHub.Services
 
             if(!Data.UserRepository.FindUserByUsername(userName,out var user,out errorMessage,out errorCategory))
             {
-                code = ApiCode.DatabaseError;
+                code = ApiCode.UnknownError;
+
+                switch (errorCategory)
+                {
+                    case Logging.LogCategory.Unknown:
+                        code = ApiCode.UnknownError;
+                        break;
+                    case Logging.LogCategory.Database:
+                        code = ApiCode.DatabaseError;
+                        break;
+                }
                 return false;
             }
 

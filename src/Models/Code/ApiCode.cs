@@ -34,9 +34,9 @@ namespace NihongoHub.Models.Code
         public const int ConfigurationError = 9003;
         public const int InternalProcessingError = 9004;
 
-        public static int? GetCorrespondingHttpcode(int apiCode)
+        public static int GetCorrespondingHttpcode(int apiCode)
         {
-            int? code = null;
+            int code = 500;
             switch (apiCode)
             {
                 case Success:
@@ -46,7 +46,7 @@ namespace NihongoHub.Models.Code
                     code = 400;
                     break;
                 case UnsupportedContentType:
-                    code = 514;
+                    code = 415;
                     break;
                 case AuthenticationFailed: case InvalidCredentials: case TokenMissing: case TokenInvalid: case TokenExpired: case TokenNotYetValid: case TokenClaimsInvalid: case UserIdentityInvalid:
                     code = 401;
@@ -58,7 +58,7 @@ namespace NihongoHub.Models.Code
                     code = 500;
                     break;
                 default:
-                    code = null;
+                    code = 500;
                     break;
             }
             return code;
