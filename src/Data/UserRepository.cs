@@ -85,7 +85,7 @@ namespace NihongoHub.Data
             }
             catch(Exception ex)
             {
-                Logging.LogReporter.Fatal("[Fatal]调用数据库时出现未知错误 \n 请管理员自行排除",Logging.LogCategory.Database,ex);
+                Logging.LogReporter.Fatal("[Fatal]调用数据库时出现未知错误 \n 请管理员自行排除",Logging.LogCategory.Unknown,ex);
             }
             return new();
         }
