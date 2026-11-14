@@ -4,7 +4,7 @@
 >
 > This project is still in its early stages of development. There is no release ready for general use yet. Features, APIs, data models, and configuration formats may change in ways that are not compatible with previous versions. Do not use the current code in a production environment.
 
-[简体中文](docs/README.zh-CN.md) | [日本語](docs/README.ja.md)
+[简体中文](docs/zh-CN/README.zh-CN.md) | [日本語](docs/ja-JP/README.ja.md)
 
 NihongoHub is a Japanese learning platform for managing and practicing Japanese vocabulary.
 

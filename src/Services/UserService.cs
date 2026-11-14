@@ -1,4 +1,5 @@
 using NihongoHub.Models.Entities;
+using NihongoHub.Models.Code;
 
 namespace NihongoHub.Services
 {
@@ -38,7 +39,7 @@ namespace NihongoHub.Services
             return true;
         }
         
-        public static bool UserVerification(string userName,string passWord,out int? userId,out UserType? userType,out string errorMessage,out Logging.LogCategory errorCategory)
+        public static bool UserVerification(string userName,string passWord,out int? userId,out UserType? userType,out string errorMessage,out Logging.LogCategory errorCategory,out int code)
         {
             errorMessage = "";
             errorCategory = Logging.LogCategory.None;
@@ -46,23 +47,35 @@ namespace NihongoHub.Services
 
             if(!Data.UserRepository.FindUserByUsername(userName,out var user,out errorMessage,out errorCategory))
             {
+                code = ApiCode.DatabaseError;
                 return false;
             }
 
             if(user == null)
             {
-                errorMessage = "该用户不存在";
+                errorMessage = "用户名或密码错误";
                 errorCategory = Logging.LogCategory.None;
+                code = ApiCode.EmptyRequest;
                 return false;
             }
 
             if (!BCrypt.Net.BCrypt.Verify(passWord, user.passwordhash))
             {
-                errorMessage = "Password错误";
+                errorMessage = "用户名或密码错误";
                 errorCategory = Logging.LogCategory.None;
+                code = ApiCode.EmptyRequest;
+                return false;
+            }
+
+            if (!user.enabled)
+            {
+                errorMessage = "用户名或密码错误";
+                errorCategory = Logging.LogCategory.None;
+                code = ApiCode.EmptyRequest;
                 return false;
             }
             
+            code = ApiCode.Success;
             userId = user.id; userType = user.usertype;
             return true;
         }
