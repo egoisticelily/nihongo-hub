@@ -15,15 +15,27 @@ namespace NihongoHub.Init
 
             if(userAll == null)
             {
-                //一般不会走到这
-                if(!Services.UserService.CreateDefaultUser(out var userName,out var password))
+                if(!Services.UserService.CreateDefaultUser(out var userName,out var password,out var errorMessage,out var errorCategory))
                 {
-                    Logging.LogReporter.Report(Logging.LogLevel.Fatal,$"默认用户创建失败，详细请看Log");
+                    Logging.LogReporter.Fatal($"[Fatal][{errorCategory}]创建用户时出现严重错误 -\n-{errorMessage}");
                 }
 
                 Logging.LogReporter.Report(Logging.LogLevel.Info,$"默认用户创建成功 -\n-username: {userName}  password: {password}");
                 return;
             }
+
+            if(userAll.Count() < 1)
+            {
+                if(!Services.UserService.CreateDefaultUser(out var userName,out var password,out var errorMessage,out var errorCategory))
+                {
+                    Logging.LogReporter.Fatal($"[Fatal][{errorCategory}]创建用户时出现严重错误 -\n-{errorMessage}");
+                }
+
+                Logging.LogReporter.Report(Logging.LogLevel.Info,$"默认用户创建成功 -\n-username: {userName}  password: {password}");
+                return;
+            }
+
+            return;
         }
     }
 }
