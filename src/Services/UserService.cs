@@ -114,5 +114,27 @@ namespace NihongoHub.Services
             return true;
         }
 
+        public static bool CreateDefaultUser(out string userName,out string password)
+        {
+            string errorMessage = "";
+            Logging.LogCategory errorCategory = Logging.LogCategory.None;
+            userName = "admin";
+
+            password = Convert.ToBase64String(System.Security.Cryptography.RandomNumberGenerator.GetBytes(16));
+
+            if (!Data.UserRepository.Insert(new()
+            {
+                username = userName,
+                passwordhash = BCrypt.Net.BCrypt.HashPassword(password),
+                enabled = true,
+                usertype = UserType.admin
+            },out errorMessage,out errorCategory))
+            {
+                Logging.LogReporter.Report(errorCategory,Logging.LogLevel.Fatal,$"[Fatal]创建默认用户时出现错误严重错误 -\n- {errorMessage}");
+                return false;
+            }
+            return true;
+        }
+
     }
 }

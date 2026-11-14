@@ -72,6 +72,23 @@ namespace NihongoHub.Data
             _ = FindUserById(userId,out var user,out _,out _);
             return user;
         }
+        public static List<Models.Entities.User> GetUsersAll()
+        {
+            //由于这是初始化时调用的，一旦出现错误，我们可以立刻结束进程而不是继续运行
+            try
+            {
+                return Init.DatabaseInit.Current.Users.FindAll().ToList();
+            }
+            catch(LiteException ex)
+            {
+                Logging.LogReporter.Fatal("[Fatal]数据库出现错误 \n 请管理员自行排除",Logging.LogCategory.Database,ex);
+            }
+            catch(Exception ex)
+            {
+                Logging.LogReporter.Fatal("[Fatal]调用数据库时出现未知错误 \n 请管理员自行排除",Logging.LogCategory.Database,ex);
+            }
+            return new();
+        }
 
         public static bool Insert(Models.Entities.User user,out string errorMessage,out Logging.LogCategory errorCategory)
         {

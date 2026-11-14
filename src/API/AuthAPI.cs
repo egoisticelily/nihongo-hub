@@ -9,6 +9,7 @@ namespace NihongoHub.API
         {
             try
             {
+                //检查请求是否为非Json
                 if (!context.Request.HasJsonContentType())
                 {
                     return Results.Json(new Models.Dtos.Responses.LoginResponse()
@@ -61,12 +62,13 @@ namespace NihongoHub.API
                 }
                 if(userId == null || Role == null)
                 {
+                    Logging.LogReporter.Report(Logging.LogCategory.Unknown,Logging.LogLevel.Error,"用户验证成功,但用户本身数据存在问题 \n - 可能是数据库存在问题，如果您是管理员，建议您手动排查");
                     return Results.Json(new Models.Dtos.Responses.LoginResponse()
                     {
-                    success = false,
-                    code = ApiCode.InternalProcessingError,
-                    message = "服务器内部错误",
-                    data = null
+                        success = false,
+                        code = ApiCode.InternalProcessingError,
+                        message = "服务器内部错误",
+                        data = null
                     },statusCode:500);
                 }
 
@@ -112,7 +114,7 @@ namespace NihongoHub.API
                 {
                     success = false,
                     code = ApiCode.UnknownError,
-                    message = $"未知错误",
+                    message = $"服务器内部错误",
                     data = null
                 },statusCode:500);
             }
