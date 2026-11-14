@@ -1,3 +1,5 @@
+using NihongoHub.Models.Entities;
+
 namespace NihongoHub.Services
 {
     public static class UserService
@@ -35,5 +37,35 @@ namespace NihongoHub.Services
 
             return true;
         }
+        
+        public static bool UserVerification(string userName,string passWord,out int? userId,out UserType? userType,out string errorMessage,out Logging.LogCategory errorCategory)
+        {
+            errorMessage = "";
+            errorCategory = Logging.LogCategory.None;
+            userId = null; userType = null; 
+
+            if(!Data.UserRepository.FindUserByUsername(userName,out var user,out errorMessage,out errorCategory))
+            {
+                return false;
+            }
+
+            if(user == null)
+            {
+                errorMessage = "该用户不存在";
+                errorCategory = Logging.LogCategory.None;
+                return false;
+            }
+
+            if (!BCrypt.Net.BCrypt.Verify(passWord, user.passwordhash))
+            {
+                errorMessage = "Password错误";
+                errorCategory = Logging.LogCategory.None;
+                return false;
+            }
+            
+            userId = user.id; userType = user.usertype;
+            return true;
+        }
+
     }
 }
