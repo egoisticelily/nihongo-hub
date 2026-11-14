@@ -45,6 +45,14 @@ namespace NihongoHub.Services
             errorCategory = Logging.LogCategory.None;
             userId = null; userType = null; 
 
+            if(String.IsNullOrWhiteSpace(userName) || String.IsNullOrWhiteSpace(passWord))
+            {
+                code = ApiCode.InvalidParameter;
+                errorMessage = "用户名或密码参数不符合要求";
+                errorCategory = Logging.LogCategory.None;
+                return false;
+            }
+
             if(!Data.UserRepository.FindUserByUsername(userName,out var user,out errorMessage,out errorCategory))
             {
                 code = ApiCode.DatabaseError;
@@ -55,7 +63,7 @@ namespace NihongoHub.Services
             {
                 errorMessage = "用户名或密码错误";
                 errorCategory = Logging.LogCategory.None;
-                code = ApiCode.EmptyRequest;
+                code = ApiCode.InvalidCredentials;
                 return false;
             }
 
@@ -63,7 +71,7 @@ namespace NihongoHub.Services
             {
                 errorMessage = "用户名或密码错误";
                 errorCategory = Logging.LogCategory.None;
-                code = ApiCode.EmptyRequest;
+                code = ApiCode.InvalidCredentials;
                 return false;
             }
 
@@ -71,7 +79,7 @@ namespace NihongoHub.Services
             {
                 errorMessage = "用户名或密码错误";
                 errorCategory = Logging.LogCategory.None;
-                code = ApiCode.EmptyRequest;
+                code = ApiCode.InvalidCredentials;
                 return false;
             }
             

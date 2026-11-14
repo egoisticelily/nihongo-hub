@@ -24,23 +24,13 @@ namespace NihongoHub.API
 
                 if(!Services.UserService.UserVerification(request.username,request.password,out var userId,out var Role,out var errorMessage,out var errorCategory,out var code))
                 {
-                    int statuscode = 0;
-                    switch (code)
-                    {
-                        case ApiCode.DatabaseError:
-                            statuscode = 500;
-                            break;
-                        case ApiCode.EmptyRequest:
-                            statuscode = 401;
-                            break;
-                    }
                     return Results.Json(new Models.Dtos.Responses.LoginResponse()
                     {
                         success = false,
                         code = code,
                         message = $"[{errorCategory}] - {errorMessage}",
                         data = null
-                    },statusCode:statuscode);
+                    },statusCode:Models.Code.ApiCode.GetCorrespondingHttpcode(code));
                 }
                 if(userId == null || Role == null)
                 {
@@ -76,25 +66,25 @@ namespace NihongoHub.API
                     }
                 },statusCode:200);
             }
-            catch(JsonException ex)
+            catch(JsonException)
             {
                 return Results.Json(new Models.Dtos.Responses.LoginResponse()
                 {
                     success = false,
                     code = ApiCode.InvalidJson,
-                    message = $"请求错误 - {ex}",
+                    message = $"请求错误",
                     data = null
                 },statusCode:400);
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 return Results.Json(new Models.Dtos.Responses.LoginResponse()
                 {
                     success = false,
                     code = ApiCode.UnknownError,
-                    message = $"未知错误 - {ex}",
+                    message = $"未知错误",
                     data = null
-                },statusCode:502);
+                },statusCode:500);
             }
         }
     }

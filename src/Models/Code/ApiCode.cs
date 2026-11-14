@@ -33,5 +33,35 @@ namespace NihongoHub.Models.Code
         public const int UnknownError = 9002;
         public const int ConfigurationError = 9003;
         public const int InternalProcessingError = 9004;
+
+        public static int? GetCorrespondingHttpcode(int apiCode)
+        {
+            int? code = null;
+            switch (apiCode)
+            {
+                case Success:
+                    code = 200;
+                    break;
+                case InvalidRequest: case EmptyRequest: case InvalidJson: case MissingParameter: case InvalidParameter:
+                    code = 400;
+                    break;
+                case UnsupportedContentType:
+                    code = 514;
+                    break;
+                case AuthenticationFailed: case InvalidCredentials: case TokenMissing: case TokenInvalid: case TokenExpired: case TokenNotYetValid: case TokenClaimsInvalid: case UserIdentityInvalid:
+                    code = 401;
+                    break;
+                case PermissionDenied: case AdminRequired: case ResourceAccessDenied:
+                    code = 403;
+                    break;
+                case InternalError: case DatabaseError: case UnknownError: case ConfigurationError: case InternalProcessingError:
+                    code = 500;
+                    break;
+                default:
+                    code = null;
+                    break;
+            }
+            return code;
+        }
     }
 }
