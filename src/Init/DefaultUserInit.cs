@@ -10,7 +10,6 @@ namespace NihongoHub.Init
         }
         public static void AnyUserCheck()
         {
-            //将来写一个负责写入文件的方法，这里先只写入Log
             List<Models.Entities.User> userAll = Data.UserRepository.GetUsersAll();
 
             if(userAll.Count() == 0)
@@ -23,6 +22,12 @@ namespace NihongoHub.Init
                 if(!Utilities.FileUtility.WriteFile($"---DefaultAdmin---\n\nusername: {userName}\npassword: {password}","Config","initial-admin-credentials.txt",out errorMessage,out errorCategory))
                 {
                     Logging.LogReporter.Report(errorCategory,Logging.LogLevel.Error,$"[创建文件时] {errorMessage}");
+                    if(!Data.UserRepository.DeleteByUsername(userName,out errorMessage,out errorCategory))
+                    {
+                        Logging.LogReporter.Fatal($"[严重错误] 默认用户已经创建,但密码未能保存至文件.系统尝试归滚,但回滚也失败.\n如果您是管理员,建议您手动排除错误 {errorMessage}",errorCategory);
+                        return;
+                    }
+                    Logging.LogReporter.Fatal($"[致命错误] 默认用户已经创建,但密码文件未能成功写入.系统目前已经回滚,您可以再次启动尝试.");
                     return;
                 }
 

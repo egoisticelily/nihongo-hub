@@ -152,5 +152,62 @@ namespace NihongoHub.Data
             }
             return true;
         }
+
+        public static bool Delete(int id,out string errorMessage,out Logging.LogCategory errorCategory)
+        {
+            errorMessage = "";
+            errorCategory = Logging.LogCategory.None;
+
+            try
+            {
+                if (!Init.DatabaseInit.Current.Users.Delete(id))
+                {
+                    errorMessage = "未能删除用户(可能是用户不存在)";
+                    errorCategory = Logging.LogCategory.Database;
+                    return false;
+                }
+            }
+            catch(LiteException ex)
+            {
+                Logging.LogReporter.Report(Logging.LogCategory.Database,Logging.LogLevel.Error,"删除用户时数据库错误",ex);
+
+                errorMessage="删除用户时数据库错误";
+                errorCategory = Logging.LogCategory.Database;
+                return false;
+            }
+            catch(Exception ex)
+            {
+                Logging.LogReporter.Report(Logging.LogCategory.Database,Logging.LogLevel.Error,"删除用户时发生未知错误",ex);
+
+                errorMessage="删除用户时发生未知错误";
+                errorCategory = Logging.LogCategory.Unknown;
+                return false;
+            }
+            return true;
+        }
+        public static bool DeleteByUsername(string username,out string errorMessage,out Logging.LogCategory errorCategory)
+        {
+            errorMessage = "";
+            errorCategory = Logging.LogCategory.None;
+
+            if(!FindUserByUsername(username,out var user,out errorMessage,out errorCategory))
+            {
+                return false;
+            }
+
+            if(user == null)
+            {
+                errorMessage = "用户不存在";
+                errorCategory = Logging.LogCategory.None;
+                return false;
+            }
+
+            if(!Delete(user.id,out errorMessage,out errorCategory))
+            {
+                return false;
+            }
+
+            return true;
+        }
     }
 }

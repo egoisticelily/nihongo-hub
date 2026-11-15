@@ -44,13 +44,24 @@ namespace NihongoHub.Utilities
 
                 File.WriteAllText(filePath,content,new UTF8Encoding(false));
             }
+            catch (IOException ex)
+            {
+                errorCategory = Logging.LogCategory.File;
+                errorMessage = $"检查/写入文件时 I/O问题 -\n-Error: {ex}";
+                return false;
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                errorCategory = Logging.LogCategory.File;
+                errorMessage = $"检查/写入文件时 权限问题 -\n-Error: {ex}";
+                return false;
+            }
             catch(Exception ex)
             {
                 errorCategory = Logging.LogCategory.Unknown;
-                errorMessage = $"检查文件Path出现未知错误 可能是Path不合法或权限问题 -\n-Error: {ex}";
+                errorMessage = $"检查/写入文件时 未知错误 可能是Path不合法或权限问题 -\n-Error: {ex}";
                 return false;
             }
-
             return true;
         }
     }
