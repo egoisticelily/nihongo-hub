@@ -16,7 +16,7 @@ namespace NihongoHub.Models.Dtos.Responses
 
     public class VocabularyNotebookSummaryByUseridResponseData
     {
-        public required List<VocabularyNotebookSummaryResponseData> VocabularyNotebookList;
+        public required List<VocabularyNotebookSummaryResponseData> VocabularyNotebookList {get;set;}
     }
     public class VocabularyNotebookSummaryByUseridResponse : ApiResponse<VocabularyNotebookSummaryByUseridResponseData>;
 

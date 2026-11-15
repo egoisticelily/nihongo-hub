@@ -34,15 +34,15 @@ namespace NihongoHub.API
                     },statusCode:Models.Code.ApiCode.GetCorrespondingHttpcode(ApiCode.EmptyRequest));
                 }
 
-                if(request.token == null)
+                if(String.IsNullOrWhiteSpace(request.token))
                 {
                     return Results.Json(new Models.Dtos.Responses.VocabularyNotebookSummaryByUseridResponse()
                     {
                         success = false,
-                        code = ApiCode.EmptyRequest, 
+                        code = ApiCode.TokenMissing, 
                         message = "token错误",
                         data = null
-                    },statusCode:Models.Code.ApiCode.GetCorrespondingHttpcode(ApiCode.EmptyRequest));
+                    },statusCode:Models.Code.ApiCode.GetCorrespondingHttpcode(ApiCode.TokenMissing));
                 }
 
                 if(!Services.AuthService.ValidateToken(request.token,out var userData,out _,out var code))
@@ -78,16 +78,43 @@ namespace NihongoHub.API
                     },statusCode:Models.Code.ApiCode.GetCorrespondingHttpcode(code));
                 }
 
-                var notebookList = Services.VocabularyNotebookService.FindVocabularyNotebooksByUserid(userData.UserId,out _);
+                var notebookList = Services.VocabularyNotebookService.FindVocabularyNotebooksByUserid(userData.UserId,out var failures);
+
+                if(failures != null)
+                {
+                    switch (failures.errorCategory)
+                    {
+                        case Logging.LogCategory.Database:
+                            code = ApiCode.DatabaseError;
+                            break;
+                        case Logging.LogCategory.Unknown:
+                            code = ApiCode.UnknownError;
+                            break;
+                        default:
+                            code = ApiCode.UnknownError;
+                            break;
+                    }
+
+                    return Results.Json(new Models.Dtos.Responses.VocabularyNotebookSummaryByUseridResponse()
+                    {
+                        success = true,
+                        code = code, 
+                        message = "OK",
+                        data = new()
+                        {
+                            VocabularyNotebookList = Models.Dtos.Responses.Auxiliary.DatabaseVocabularyNotebookToResponseData(notebookList)
+                        }
+                    },statusCode:Models.Code.ApiCode.GetCorrespondingHttpcode(code));
+                }
 
                 return Results.Json(new Models.Dtos.Responses.VocabularyNotebookSummaryByUseridResponse()
                 {
-                    success = false,
+                    success = true,
                     code = ApiCode.Success, 
                     message = "OK",
                     data = new()
                     {
-                            VocabularyNotebookList = Models.Dtos.Responses.Auxiliary.DatabaseVocabularyNotebookToResponseData(notebookList)
+                        VocabularyNotebookList = Models.Dtos.Responses.Auxiliary.DatabaseVocabularyNotebookToResponseData(notebookList)
                     }
                 },statusCode:Models.Code.ApiCode.GetCorrespondingHttpcode(ApiCode.Success));
             }
@@ -95,7 +122,7 @@ namespace NihongoHub.API
             {
                 Logging.LogReporter.Report(Logging.LogCategory.Json,Logging.LogLevel.Warn,"登录请求的JSON解析失败",ex);
 
-                return Results.Json(new Models.Dtos.Responses.LoginResponse()
+                return Results.Json(new Models.Dtos.Responses.VocabularyNotebookSummaryByUseridResponse()
                 {
                     success = false,
                     code = ApiCode.InvalidJson,
@@ -106,7 +133,7 @@ namespace NihongoHub.API
             catch(Exception ex)
             {
                 Logging.LogReporter.Report(Logging.LogCategory.Unknown,Logging.LogLevel.Error,"出现未处理异常",ex);
-                return Results.Json(new Models.Dtos.Responses.LoginResponse()
+                return Results.Json(new Models.Dtos.Responses.VocabularyNotebookSummaryByUseridResponse()
                 {
                     success = false,
                     code = ApiCode.UnknownError,

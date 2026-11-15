@@ -99,7 +99,7 @@ namespace NihongoHub.Data
             }
             catch(Exception ex)
             {
-                Logging.LogReporter.Report(Logging.LogCategory.Database,Logging.LogLevel.Error,"查询单词本时发生未知错误",ex);
+                Logging.LogReporter.Report(Logging.LogCategory.Unknown,Logging.LogLevel.Error,"查询单词本时发生未知错误",ex);
 
                 noteBooks = new();
                 errorMessage="查询单词本时发生未知错误";
