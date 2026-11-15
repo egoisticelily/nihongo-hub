@@ -46,6 +46,11 @@ namespace NihongoHub.Logging
             Environment.Exit(1);
         }
 
+        public static void Secret(string message)
+        {
+            Console.WriteLine(message);
+        }
+
         private static string Format(LogCategory category, string message)
         {
             return category == LogCategory.None ? message : $"[{category}] {message}";
