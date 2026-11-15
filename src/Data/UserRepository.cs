@@ -177,7 +177,7 @@ namespace NihongoHub.Data
             }
             catch(Exception ex)
             {
-                Logging.LogReporter.Report(Logging.LogCategory.Database,Logging.LogLevel.Error,"删除用户时发生未知错误",ex);
+                Logging.LogReporter.Report(Logging.LogCategory.Unknown,Logging.LogLevel.Error,"删除用户时发生未知错误",ex);
 
                 errorMessage="删除用户时发生未知错误";
                 errorCategory = Logging.LogCategory.Unknown;

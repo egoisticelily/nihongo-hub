@@ -78,6 +78,37 @@ namespace NihongoHub.Data
             return true;
         }
 
+        public static bool FindVocabularyNotebooksByUserId(int userId,out List<Models.Entities.VocabularyNotebook> noteBooks,out string errorMessage,out Logging.LogCategory errorCategory)
+        {
+            errorMessage = "";
+            errorCategory = Logging.LogCategory.None;
+            noteBooks = new();
+            
+            try
+            {
+                noteBooks = Init.DatabaseInit.Current.VocabularyNotebooks.Find(x => x.userid == userId).ToList();
+            }
+            catch(LiteException ex)
+            {
+                Logging.LogReporter.Report(Logging.LogCategory.Database,Logging.LogLevel.Error,"查询单词本时数据库错误",ex);
+
+                noteBooks = new();
+                errorMessage=  "查询单词本时数据库错误";
+                errorCategory = Logging.LogCategory.Database;
+                return false;
+            }
+            catch(Exception ex)
+            {
+                Logging.LogReporter.Report(Logging.LogCategory.Database,Logging.LogLevel.Error,"查询单词本时发生未知错误",ex);
+
+                noteBooks = new();
+                errorMessage="查询单词本时发生未知错误";
+                errorCategory = Logging.LogCategory.Unknown;
+                return false;
+            }
+            return true;
+        }
+
         public static bool Insert(Models.Entities.VocabularyNotebook vocabularyNotebook,out string errorMessage,out Logging.LogCategory errorCategory)
         {
             errorMessage = "";

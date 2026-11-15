@@ -8,10 +8,37 @@ namespace NihongoHub.Models.Dtos.Responses
         public required string name {get;set;}
         public string? note {get;set;}
         public required List<string> tags {get;set;}
-        public required int wordcount {get;set;}
         public required DateTime createdat {get;set;}
         public required DateTime updatedat {get;set;}
     }
 
-    public class VocabularyNotebookSummaryResponse : ApiResponse<VocabularyNotebookSummaryResponseData>;
+    public class VocabularyNotebookSummaryByTagResponse : ApiResponse<VocabularyNotebookSummaryResponseData>;
+
+    public class VocabularyNotebookSummaryByUseridResponseData
+    {
+        public required List<VocabularyNotebookSummaryResponseData> VocabularyNotebookList;
+    }
+    public class VocabularyNotebookSummaryByUseridResponse : ApiResponse<VocabularyNotebookSummaryByUseridResponseData>;
+
+
+    public static class Auxiliary{
+        public static List<VocabularyNotebookSummaryResponseData> DatabaseVocabularyNotebookToResponseData(List<Models.Entities.VocabularyNotebook> databaseNotebook)
+        {
+            List<VocabularyNotebookSummaryResponseData> notebookResponseList = new();
+            foreach(var notebook in databaseNotebook)
+            {
+                notebookResponseList.Add(new()
+                {
+                    id = notebook.id,
+                    name = notebook.name,
+                    note = notebook.note,
+                    tags = notebook.tags,
+                    createdat = notebook.createdat,
+                    updatedat = notebook.updatedat
+                });
+            }
+            return notebookResponseList;
+        }
+    }
+    
 }

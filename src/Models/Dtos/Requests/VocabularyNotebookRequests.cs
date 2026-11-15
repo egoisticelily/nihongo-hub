@@ -2,14 +2,20 @@
 
 namespace NihongoHub.Models.Dtos.Requests
 {
-    public class SearchVocabularyNotebookRequestData
+    public class SearchVocabularyNotebookByTagRequestData
     {
         /// <summary>
         /// 根据tag查找单词本
         /// </summary>
         public required string tag {get;set;}
     }
-    public class SearchVocabularyNotebookRequest : ApiRequest<SearchVocabularyNotebookRequestData>;
+    public class SearchVocabularyNotebookByTagRequest : ApiRequest<SearchVocabularyNotebookByTagRequestData>;
+
+    public class SearchVocabularyNotebookByUseridRequestData
+    {
+        
+    }
+    public class SearchVocabularyNotebookByUseridRequest : ApiRequest<SearchVocabularyNotebookByUseridRequestData>;
 
     public class CreateVocabularyNotebookRequestData
     {
