@@ -97,13 +97,10 @@ namespace NihongoHub.API
 
                     return Results.Json(new Models.Dtos.Responses.VocabularyNotebookSummaryByUseridResponse()
                     {
-                        success = true,
+                        success = false,
                         code = code, 
-                        message = "OK",
-                        data = new()
-                        {
-                            VocabularyNotebookList = Models.Dtos.Responses.Auxiliary.DatabaseVocabularyNotebookToResponseData(notebookList)
-                        }
+                        message = $"[{failures.errorCategory}] {failures.errorMessage}",
+                        data = null
                     },statusCode:Models.Code.ApiCode.GetCorrespondingHttpcode(code));
                 }
 
