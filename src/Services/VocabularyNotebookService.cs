@@ -88,6 +88,21 @@ namespace NihongoHub.Services
             return notebookList;
         }
 
+        public static List<Models.Entities.VocabularyNotebook> FindVocabularyNotebooksByTag(string tag,int userid,out VocabularyNotebookOperationFailure? failures)
+        {
+            string errorMessage = "";
+            Logging.LogCategory errorCategory = Logging.LogCategory.None;
+            List<Models.Entities.VocabularyNotebook> notebookList = new();
+            failures = null;
+
+            if(!Data.VocabularyNotebookRepository.FindVocabularyNotebooksByTag(tag,userid,out notebookList,out errorMessage,out errorCategory))
+            {
+                failures = new(errorMessage,errorCategory,userid);
+                return new();
+            }
+            return notebookList;
+        }
+
         public static VocabularyNotebookOperationFailure? CreateVocabularyNotebook(Models.Dtos.Requests.CreateVocabularyNotebookRequestData noteBook,int userID)
         {
             string errorMessage = "";

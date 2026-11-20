@@ -1,4 +1,4 @@
-using System.Text.Json;
+using Microsoft.AspNetCore.Http.HttpResults;
 using NihongoHub.Models.Code;
 
 namespace NihongoHub.API
@@ -7,12 +7,12 @@ namespace NihongoHub.API
     {
         public static async Task<IResult> SearchAllVocabularyNotebook(HttpContext context)
         {
-            var _request = await ValidateRequest<Models.Dtos.Requests.SearchVocabularyNotebookByUseridRequest>(context);
+            var requestResult = await Utilities.JsonRequestValidator.ValidateJsonRequestAsync<Models.Dtos.Requests.SearchVocabularyNotebookByUseridRequest>(context);
 
-            if (!_request.success)
+            if (!requestResult.Success)
             {
                 string message = "";
-                switch (_request.code)
+                switch (requestResult.Code)
                 {
                     case ApiCode.UnsupportedContentType:
                         message = "请求有问题";
@@ -29,22 +29,22 @@ namespace NihongoHub.API
                     default:
                         message = "请求处理失败";
                         break;
-                    }
+                }
 
-                return Results.Json(new Models.Dtos.Responses.VocabularyNotebookSummaryByUseridResponse()
+                return Results.Json(new Models.Dtos.Responses.VocabularyNotebookListSummaryResponse()
                 {
                     success = false,
-                    code = _request.code,
+                    code = requestResult.Code,
                     message = message,
                     data = null
-                },statusCode:Models.Code.ApiCode.GetCorrespondingHttpcode(_request.code));
+                },statusCode:Models.Code.ApiCode.GetCorrespondingHttpcode(requestResult.Code));
             }
 
-            var request = _request.request;
+            var request = requestResult.Request;
 
             if(request == null)
             {
-                return Results.Json(new Models.Dtos.Responses.VocabularyNotebookSummaryByUseridResponse()
+                return Results.Json(new Models.Dtos.Responses.VocabularyNotebookListSummaryResponse()
                 {
                     success = false,
                     code = ApiCode.UnknownError,
@@ -53,48 +53,40 @@ namespace NihongoHub.API
                 },statusCode:Models.Code.ApiCode.GetCorrespondingHttpcode(ApiCode.UnknownError));
             }
 
-            if(String.IsNullOrWhiteSpace(request.token))
+            if(!Utilities.UsereValidator.ValidateUser(request.token,out var userData,out var code))
             {
-                return Results.Json(new Models.Dtos.Responses.VocabularyNotebookSummaryByUseridResponse()
+                string message = "";
+                switch (code)
                 {
-                    success = false,
-                    code = ApiCode.TokenMissing, 
-                    message = "token错误",
-                    data = null
-                },statusCode:Models.Code.ApiCode.GetCorrespondingHttpcode(ApiCode.TokenMissing));
-            }
+                    case ApiCode.TokenMissing:
+                        message = "token错误";
+                        break;
+                    case ApiCode.UnknownError:
+                        message = "未知错误";
+                        break;
+                    default:
+                        message = "查询时出现错误";
+                        break;
+                }
 
-            if(!Services.AuthService.ValidateToken(request.token,out var userData,out _,out var code))
-            {
-                return Results.Json(new Models.Dtos.Responses.VocabularyNotebookSummaryByUseridResponse()
+                return Results.Json(new Models.Dtos.Responses.VocabularyNotebookListSummaryResponse()
                 {
                     success = false,
                     code = code, 
-                    message = "token错误",
+                    message = message,
                     data = null
                 },statusCode:Models.Code.ApiCode.GetCorrespondingHttpcode(code));
             }
 
             if(userData == null)
             {
-                return Results.Json(new Models.Dtos.Responses.VocabularyNotebookSummaryByUseridResponse()
+                return Results.Json(new Models.Dtos.Responses.VocabularyNotebookListSummaryResponse()
                 {
                     success = false,
                     code = ApiCode.UnknownError, 
-                    message = "用户状态有问题",
+                    message = "未知错误",
                     data = null
                 },statusCode:Models.Code.ApiCode.GetCorrespondingHttpcode(ApiCode.UnknownError));
-            }
-
-            if(!Services.UserService.ValidateUserIdentity(userData,out _,out _,out code))
-            {
-                return Results.Json(new Models.Dtos.Responses.VocabularyNotebookSummaryByUseridResponse()
-                {
-                    success = false,
-                    code = code, 
-                    message = "用户状态有问题",
-                    data = null
-                },statusCode:Models.Code.ApiCode.GetCorrespondingHttpcode(code));
             }
 
             var notebookList = Services.VocabularyNotebookService.FindVocabularyNotebooksByUserid(userData.UserId,out var failures);
@@ -114,7 +106,7 @@ namespace NihongoHub.API
                         break;
                 }
 
-                return Results.Json(new Models.Dtos.Responses.VocabularyNotebookSummaryByUseridResponse()
+                return Results.Json(new Models.Dtos.Responses.VocabularyNotebookListSummaryResponse()
                 {
                     success = false,
                     code = code, 
@@ -123,7 +115,7 @@ namespace NihongoHub.API
                 },statusCode:Models.Code.ApiCode.GetCorrespondingHttpcode(code));
             }
 
-            return Results.Json(new Models.Dtos.Responses.VocabularyNotebookSummaryByUseridResponse()
+            return Results.Json(new Models.Dtos.Responses.VocabularyNotebookListSummaryResponse()
             {
                 success = true,
                 code = ApiCode.Success, 
@@ -135,56 +127,136 @@ namespace NihongoHub.API
             },statusCode:Models.Code.ApiCode.GetCorrespondingHttpcode(ApiCode.Success));
         }
 
-        private class Request<T>
+        public static async Task<IResult> SearchVocabularyNotebookByTag(HttpContext context)
         {
-            public Request(int _code,T? _request)
+            var requestResult = await Utilities.JsonRequestValidator.ValidateJsonRequestAsync<Models.Dtos.Requests.SearchVocabularyNotebookByTagRequest>(context);
+
+            if (!requestResult.Success)
             {
-                code = _code;
-                request = _request;
-            }
-            public bool success
-            {
-                get
+                string message = "";
+                switch (requestResult.Code)
                 {
-                    return code == ApiCode.Success;
-                }
-            }
-            public int code {get;}
-            public T? request {get;}
-        }
-        private async static Task<Request<T>> ValidateRequest<T>(HttpContext context) 
-            where T : class
-        {
-            try
-            {
-                //检查请求是否为非Json
-                if (!context.Request.HasJsonContentType())
-                {
-                    int code = ApiCode.UnsupportedContentType;
-                    return new(code,default);
+                    case ApiCode.UnsupportedContentType:
+                        message = "请求有问题";
+                        break;
+                    case ApiCode.EmptyRequest:
+                        message = "请求为空";
+                        break;
+                    case ApiCode.InvalidJson:
+                        message = "请求错误";
+                        break;
+                    case ApiCode.UnknownError:
+                        message = "服务器内部错误";
+                        break;
+                    default:
+                        message = "请求处理失败";
+                        break;
                 }
 
-                var request = await context.Request.ReadFromJsonAsync<T>();
-
-                if(request == null)
+                return Results.Json(new Models.Dtos.Responses.VocabularyNotebookListSummaryResponse()
                 {
-                    int code = ApiCode.EmptyRequest;
-                    return new(code,request);
+                    success = false,
+                    code = requestResult.Code,
+                    message = message,
+                    data = null
+                },statusCode:Models.Code.ApiCode.GetCorrespondingHttpcode(requestResult.Code));
+            }
+
+            var request = requestResult.Request;
+            if(request == null)
+            {
+                return Results.Json(new Models.Dtos.Responses.VocabularyNotebookListSummaryResponse()
+                {
+                    success = false,
+                    code = ApiCode.UnknownError,
+                    message = "出现未知问题",
+                    data = null
+                },statusCode:ApiCode.UnknownError);
+            }
+
+            if(!Utilities.UsereValidator.ValidateUser(request.token,out var userData,out var code))
+            {
+                string message = "";
+                switch (code)
+                {
+                    case ApiCode.TokenMissing:
+                        message = "token错误";
+                        break;
+                    case ApiCode.UnknownError:
+                        message = "未知错误";
+                        break;
+                    default:
+                        message = "查询时出现错误";
+                        break;
                 }
-                return new(ApiCode.Success,request);
+
+                return Results.Json(new Models.Dtos.Responses.VocabularyNotebookListSummaryResponse()
+                {
+                    success = false,
+                    code = code, 
+                    message = message,
+                    data = null
+                },statusCode:Models.Code.ApiCode.GetCorrespondingHttpcode(code));
             }
-            catch(JsonException ex)
+
+            if(userData == null)
             {
-                Logging.LogReporter.Report(Logging.LogCategory.Json,Logging.LogLevel.Warn,"JSON解析失败",ex);
-                int code = ApiCode.InvalidJson;
-                return new(code,default);
+                return Results.Json(new Models.Dtos.Responses.VocabularyNotebookListSummaryResponse()
+                {
+                    success = false,
+                    code = ApiCode.UnknownError, 
+                    message = "未知错误",
+                    data = null
+                },statusCode:Models.Code.ApiCode.GetCorrespondingHttpcode(ApiCode.UnknownError));
             }
-            catch(Exception ex)
+
+            if(request.data == null)
             {
-                Logging.LogReporter.Report(Logging.LogCategory.Unknown,Logging.LogLevel.Error,"出现未处理异常",ex);
-                int code = ApiCode.UnknownError;
-                return new(code,default);
+                return Results.Json(new Models.Dtos.Responses.VocabularyNotebookListSummaryResponse()
+                {
+                    success = false,
+                    code = ApiCode.EmptyRequest, 
+                    message = "请求错误",
+                    data = null
+                },statusCode:Models.Code.ApiCode.GetCorrespondingHttpcode(ApiCode.EmptyRequest));
             }
+
+            var notebookList = Services.VocabularyNotebookService.FindVocabularyNotebooksByTag(request.data.tag,userData.UserId,out var failures);
+
+            if(failures != null)
+            {
+                switch (failures.errorCategory)
+                {
+                    case Logging.LogCategory.Database:
+                        code = ApiCode.DatabaseError;
+                        break;
+                    case Logging.LogCategory.Unknown:
+                        code = ApiCode.UnknownError;
+                        break;
+                    default:
+                        code = ApiCode.UnknownError;
+                        break;
+                }
+
+                return Results.Json(new Models.Dtos.Responses.VocabularyNotebookListSummaryResponse()
+                {
+                    success = false,
+                    code = code, 
+                    message = $"[{failures.errorCategory}] {failures.errorMessage}",
+                    data = null
+                },statusCode:Models.Code.ApiCode.GetCorrespondingHttpcode(code));
+            }
+
+            return Results.Json(new Models.Dtos.Responses.VocabularyNotebookListSummaryResponse()
+            {
+                success = true,
+                code = ApiCode.Success, 
+                message = "OK",
+                data = new()
+                {
+                    VocabularyNotebookList = Models.Dtos.Responses.Auxiliary.DatabaseVocabularyNotebookToResponseData(notebookList)
+                }
+            },statusCode:Models.Code.ApiCode.GetCorrespondingHttpcode(ApiCode.Success));
         }
     }
 }

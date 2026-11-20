@@ -12,14 +12,13 @@ namespace NihongoHub.Models.Dtos.Responses
         public required DateTime updatedat {get;set;}
     }
 
-    public class VocabularyNotebookSummaryByTagResponse : ApiResponse<VocabularyNotebookSummaryResponseData>;
+    public class VocabularyNotebookSummaryResponse : ApiResponse<VocabularyNotebookSummaryResponseData>;
 
-    public class VocabularyNotebookSummaryByUseridResponseData
+    public class VocabularyNotebookListSummaryResponseData
     {
         public required List<VocabularyNotebookSummaryResponseData> VocabularyNotebookList {get;set;}
     }
-    public class VocabularyNotebookSummaryByUseridResponse : ApiResponse<VocabularyNotebookSummaryByUseridResponseData>;
-
+    public class VocabularyNotebookListSummaryResponse : ApiResponse<VocabularyNotebookListSummaryResponseData>;
 
     public static class Auxiliary{
         public static List<VocabularyNotebookSummaryResponseData> DatabaseVocabularyNotebookToResponseData(List<Models.Entities.VocabularyNotebook> databaseNotebook)
