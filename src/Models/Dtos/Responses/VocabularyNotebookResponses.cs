@@ -19,6 +19,20 @@ namespace NihongoHub.Models.Dtos.Responses
         public required List<VocabularyNotebookSummaryResponseData> VocabularyNotebookList {get;set;}
     }
     public class VocabularyNotebookListSummaryResponse : ApiResponse<VocabularyNotebookListSummaryResponseData>;
+    
+    public class DeleteVocabularyNotebookSummaryResponseData
+    {
+        public int? id {get;set;}
+        public required string errormessage {get;set;}
+        public string? errorcategory {get;set;}
+    }
+
+    public class DeleteVocabularyNotebookByListSummaryResponseData
+    {
+        public required List<DeleteVocabularyNotebookSummaryResponseData> responseDataList {get;set;}
+    }
+
+    public class DeleteVocabularyNotebookByListSummaryResponse : ApiResponse<DeleteVocabularyNotebookByListSummaryResponseData>;
 
     public static class Auxiliary{
         public static List<VocabularyNotebookSummaryResponseData> DatabaseVocabularyNotebookToResponseData(List<Models.Entities.VocabularyNotebook> databaseNotebook)
@@ -38,6 +52,22 @@ namespace NihongoHub.Models.Dtos.Responses
             }
             return notebookResponseList;
         }
+
+        public static List<DeleteVocabularyNotebookSummaryResponseData> VocabularyNotebookOperationFailureListToResponseData(List<Services.VocabularyNotebookOperationFailure> failuresList)
+        {
+            List<DeleteVocabularyNotebookSummaryResponseData> responseDataList = new();
+            foreach(var failures in failuresList)
+            {
+                responseDataList.Add(new()
+                {
+                    id = failures.id,
+                    errormessage = failures.errorMessage,
+                    errorcategory = failures.errorCategory.ToString(),
+                });
+            }
+            return responseDataList;
+        }
+
     }
     
 }

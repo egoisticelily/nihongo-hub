@@ -550,11 +550,12 @@ namespace NihongoHub.API
                         break;
                 }
 
-                return Results.Json(new Models.Dtos.Responses.ApiResponse()
+                return Results.Json(new Models.Dtos.Responses.DeleteVocabularyNotebookByListSummaryResponse()
                 {
                     success = false,
                     code = requestResult.Code,
                     message = message,
+                    data = null
                 },statusCode:Models.Code.ApiCode.GetCorrespondingHttpcode(requestResult.Code));
             }
 
@@ -576,41 +577,48 @@ namespace NihongoHub.API
                         break;
                 }
 
-                return Results.Json(new Models.Dtos.Responses.ApiResponse()
+                return Results.Json(new Models.Dtos.Responses.DeleteVocabularyNotebookByListSummaryResponse()
                 {
                     success = false,
                     code = code, 
                     message = message,
+                    data = null
                 },statusCode:Models.Code.ApiCode.GetCorrespondingHttpcode(code));
             }
 
             if(request.data == null)
             {
-                return Results.Json(new Models.Dtos.Responses.ApiResponse()
+                return Results.Json(new Models.Dtos.Responses.DeleteVocabularyNotebookByListSummaryResponse()
                 {
                     success = false,
                     code = ApiCode.EmptyRequest, 
                     message = "请求错误",
+                    data = null
                 },statusCode:Models.Code.ApiCode.GetCorrespondingHttpcode(ApiCode.EmptyRequest));
             }
-
+        
             var failures = Services.VocabularyNotebookService.DeleteNotebooks(request.data,userData.UserId);
 
-            if(failures != null)
+            if(failures.Count() > 0)
             {
-                return Results.Json(new Models.Dtos.Responses.ApiResponse()
+                return Results.Json(new Models.Dtos.Responses.DeleteVocabularyNotebookByListSummaryResponse()
                 {
                     success = false,
                     code = ApiCode.InternalError,
                     message = $"一共有:{failures.Count()} 个错误",
+                    data = new()
+                    {
+                        responseDataList = Models.Dtos.Responses.Auxiliary.VocabularyNotebookOperationFailureListToResponseData(failures)
+                    }
                 },statusCode:Models.Code.ApiCode.GetCorrespondingHttpcode(ApiCode.InternalError));
             }
 
-            return Results.Json(new Models.Dtos.Responses.ApiResponse()
+            return Results.Json(new Models.Dtos.Responses.DeleteVocabularyNotebookByListSummaryResponse()
             {
                 success = true,
                 code = ApiCode.Success, 
                 message = "OK",
+                data = null
             },statusCode:Models.Code.ApiCode.GetCorrespondingHttpcode(ApiCode.Success));
         }
     }

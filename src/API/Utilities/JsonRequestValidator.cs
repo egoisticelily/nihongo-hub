@@ -35,11 +35,17 @@ namespace NihongoHub.API.Utilities
     }
     public static class JsonRequestValidator
     {
+        private static readonly JsonSerializerOptions JsonOptions =new(JsonSerializerDefaults.Web)
+        {
+            RespectNullableAnnotations = true
+        };
+
         public static async Task<RequestValidationResult<T>> ValidateJsonRequestAsync<T>(HttpContext context) 
             where T : class
         {
             try
             {
+                
                 //检查请求是否为非Json
                 if (!context.Request.HasJsonContentType())
                 {
@@ -47,7 +53,7 @@ namespace NihongoHub.API.Utilities
                     return new(code,default);
                 }
 
-                var request = await context.Request.ReadFromJsonAsync<T>();
+                var request = await context.Request.ReadFromJsonAsync<T>(JsonOptions);
 
                 if(request == null)
                 {
