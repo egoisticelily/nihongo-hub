@@ -48,7 +48,7 @@ namespace NihongoHub.API
                     code = ApiCode.UnknownError,
                     message = "出现未知问题",
                     data = null
-                },statusCode:ApiCode.UnknownError);
+                },statusCode:Models.Code.ApiCode.GetCorrespondingHttpcode(ApiCode.UnknownError));
             }
 
             if(!Services.UserService.UserVerification(request.username,request.password,out var userId,out var Role,out _,out _,out var code))

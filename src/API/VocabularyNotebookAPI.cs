@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Http.HttpResults;
 using NihongoHub.Models.Code;
 
 namespace NihongoHub.API
@@ -42,18 +41,7 @@ namespace NihongoHub.API
 
             var request = requestResult.Request;
 
-            if(request == null)
-            {
-                return Results.Json(new Models.Dtos.Responses.VocabularyNotebookListSummaryResponse()
-                {
-                    success = false,
-                    code = ApiCode.UnknownError,
-                    message = "出现未知问题",
-                    data = null
-                },statusCode:Models.Code.ApiCode.GetCorrespondingHttpcode(ApiCode.UnknownError));
-            }
-
-            if(!Utilities.UsereValidator.ValidateUser(request.token,out var userData,out var code))
+            if(!Utilities.UserValidator.ValidateUser(request.token,out var userData,out var code))
             {
                 string message = "";
                 switch (code)
@@ -76,17 +64,6 @@ namespace NihongoHub.API
                     message = message,
                     data = null
                 },statusCode:Models.Code.ApiCode.GetCorrespondingHttpcode(code));
-            }
-
-            if(userData == null)
-            {
-                return Results.Json(new Models.Dtos.Responses.VocabularyNotebookListSummaryResponse()
-                {
-                    success = false,
-                    code = ApiCode.UnknownError, 
-                    message = "未知错误",
-                    data = null
-                },statusCode:Models.Code.ApiCode.GetCorrespondingHttpcode(ApiCode.UnknownError));
             }
 
             var notebookList = Services.VocabularyNotebookService.FindVocabularyNotebooksByUserid(userData.UserId,out var failures);
@@ -163,18 +140,8 @@ namespace NihongoHub.API
             }
 
             var request = requestResult.Request;
-            if(request == null)
-            {
-                return Results.Json(new Models.Dtos.Responses.VocabularyNotebookListSummaryResponse()
-                {
-                    success = false,
-                    code = ApiCode.UnknownError,
-                    message = "出现未知问题",
-                    data = null
-                },statusCode:ApiCode.UnknownError);
-            }
 
-            if(!Utilities.UsereValidator.ValidateUser(request.token,out var userData,out var code))
+            if(!Utilities.UserValidator.ValidateUser(request.token,out var userData,out var code))
             {
                 string message = "";
                 switch (code)
@@ -197,17 +164,6 @@ namespace NihongoHub.API
                     message = message,
                     data = null
                 },statusCode:Models.Code.ApiCode.GetCorrespondingHttpcode(code));
-            }
-
-            if(userData == null)
-            {
-                return Results.Json(new Models.Dtos.Responses.VocabularyNotebookListSummaryResponse()
-                {
-                    success = false,
-                    code = ApiCode.UnknownError, 
-                    message = "未知错误",
-                    data = null
-                },statusCode:Models.Code.ApiCode.GetCorrespondingHttpcode(ApiCode.UnknownError));
             }
 
             if(request.data == null)

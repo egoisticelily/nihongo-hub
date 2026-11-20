@@ -1,15 +1,28 @@
 using System.Text.Json;
 using NihongoHub.Models.Code;
+using System.Diagnostics.CodeAnalysis;
 
 namespace NihongoHub.API.Utilities
 {
     public class RequestValidationResult<T>
     {
+        /// <summary>
+        /// 禁止在code为Success时传入nullrequest
+        /// </summary>
+        /// <param name="code"></param>
+        /// <param name="request"></param>
         public RequestValidationResult(int code,T? request)
         {
+            if(code == ApiCode.Success && request == null)
+            {
+                Code = ApiCode.UnknownError;
+                Request = default;
+                return;
+            }
             Code = code;
             Request = request;
         }
+        [MemberNotNullWhen(true,nameof(Request))]
         public bool Success
         {
             get
@@ -22,7 +35,7 @@ namespace NihongoHub.API.Utilities
     }
     public static class JsonRequestValidator
     {
-        public async static Task<RequestValidationResult<T>> ValidateJsonRequestAsync<T>(HttpContext context) 
+        public static async Task<RequestValidationResult<T>> ValidateJsonRequestAsync<T>(HttpContext context) 
             where T : class
         {
             try

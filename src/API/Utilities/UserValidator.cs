@@ -1,10 +1,11 @@
 using NihongoHub.Models.Code;
+using System.Diagnostics.CodeAnalysis;
 
 namespace NihongoHub.API.Utilities
 {
-    public static class UsereValidator
+    public static class UserValidator
     {
-        public static bool ValidateUser(string? token,out Services.TokenUserData? userData,out int code)
+        public static bool ValidateUser(string? token,[NotNullWhen(true)] out Services.TokenUserData? userData,out int code)
         {
             if (String.IsNullOrWhiteSpace(token))
             {
