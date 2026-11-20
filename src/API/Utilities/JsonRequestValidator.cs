@@ -5,6 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace NihongoHub.API.Utilities
 {
     public class RequestValidationResult<T>
+        where T: class
     {
         /// <summary>
         /// 禁止在code为Success时传入nullrequest
@@ -15,13 +16,12 @@ namespace NihongoHub.API.Utilities
         {
             if(code == ApiCode.Success && request == null)
             {
-                Code = ApiCode.UnknownError;
-                Request = default;
-                return;
+                throw new ArgumentNullException(nameof(request));
             }
             Code = code;
             Request = request;
         }
+        
         [MemberNotNullWhen(true,nameof(Request))]
         public bool Success
         {

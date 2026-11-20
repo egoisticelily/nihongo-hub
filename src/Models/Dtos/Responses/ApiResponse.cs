@@ -9,4 +9,10 @@ namespace NihongoHub.Models.Dtos.Responses
         public string? message {get;set;}
         public TData? data {get;set;}
     }
+    public class ApiResponse
+    {
+        public required bool success {get;set;}
+        public required int code {get;set;} 
+        public string? message {get;set;}
+    }
 }

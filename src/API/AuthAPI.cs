@@ -40,16 +40,6 @@ namespace NihongoHub.API
             }
 
             var request = requestResult.Request;
-            if(request == null)
-            {
-                return Results.Json(new Models.Dtos.Responses.LoginResponse()
-                {
-                    success = false,
-                    code = ApiCode.UnknownError,
-                    message = "出现未知问题",
-                    data = null
-                },statusCode:Models.Code.ApiCode.GetCorrespondingHttpcode(ApiCode.UnknownError));
-            }
 
             if(!Services.UserService.UserVerification(request.username,request.password,out var userId,out var Role,out _,out _,out var code))
             {
