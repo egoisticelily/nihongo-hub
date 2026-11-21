@@ -68,6 +68,20 @@ namespace NihongoHub.Models.Dtos.Responses
             return responseDataList;
         }
 
+        public static List<DeleteWordsSummaryResponseData> WordOperationFailureListToResponseData(List<Services.WordOperationFailure> failuresList)
+        {
+            List<DeleteWordsSummaryResponseData> responseDataList = new();
+            foreach(var failures in failuresList)
+            {
+                responseDataList.Add(new()
+                {
+                    id = failures.id,
+                    errormessage = failures.errorMessage,
+                    errorcategory = failures.errorCategory.ToString(),
+                });
+            }
+            return responseDataList;
+        }
     }
     
 }

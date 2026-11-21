@@ -29,7 +29,19 @@ namespace NihongoHub.Models.Dtos.Responses
     {
         public required List<WordResponse> words {get;set;}
     }
-    public class VocabularyNotebookWordsResponse : ApiResponse<WordsResponseData>;
 
     public class SearchWordsResponse : ApiResponse<WordsResponseData>;
+
+    public class DeleteWordsSummaryResponseData
+    {
+        public int? id {get;set;}
+        public required string errormessage {get;set;}
+        public string? errorcategory {get;set;}
+    }
+    public class DeleteWordsByListSummaryResponseData
+    {
+        public required List<DeleteWordsSummaryResponseData> responseDataList {get;set;}
+    }
+    public class DeleteWordsByListSummaryResponse : ApiResponse<DeleteWordsByListSummaryResponseData>;
+
 }

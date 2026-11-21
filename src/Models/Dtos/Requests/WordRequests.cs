@@ -2,14 +2,20 @@
 
 namespace NihongoHub.Models.Dtos.Requests
 {
-    public class SearchWordsRequestData
+    public class SearchWordsByQueryRequestData
     {
         /// <summary>
         /// 这里的query既可以是kannji、kana，也可以是单词的意思等，需要后端自行判断
         /// </summary>
         public required string query {get;set;}
     }
-    public class SearchWordsRequest : ApiRequest<SearchWordsRequestData>;
+    public class SearchWordsByQueryRequest : ApiRequest<SearchWordsByQueryRequestData>;
+
+    public class SearchWordsByVocabularyNotebookIdRequestData
+    {
+        public required int id {get;set;}
+    }
+    public class SearchWordsByVocabularyNotebookIdRequest : ApiRequest<SearchWordsByVocabularyNotebookIdRequestData>;
 
     public class CreateWordRequestData
     {

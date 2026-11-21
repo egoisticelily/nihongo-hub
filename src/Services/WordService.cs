@@ -99,6 +99,30 @@ namespace NihongoHub.Services
             return SortWordsByRelevance(words, query);
         }
 
+        public static List<Models.Entities.Word> FindWordsByNotebookId(int id,int userID,out List<WordOperationFailure> failure)
+        {
+            List<Models.Entities.Word> words = new();
+            failure = new();
+            var notebookData = VocabularyNotebookService.FindVocabularyNotebookById(id,userID,out var _failure);
+
+            if(_failure == null)
+            {
+                _failure = new("内部意外错误",Logging.LogCategory.Unknown,id);
+            }
+
+            if(notebookData == null)
+            {
+                failure = new();
+                failure.Add(new(_failure.errorMessage,_failure.errorCategory,_failure.id));
+                return words;
+            }
+
+            var wordData = FindWordsByIds(notebookData.tanngoidlist,userID,out failure);
+
+            failure = new();
+            return wordData;
+        }
+
         public static List<WordOperationFailure> CreateWords(Models.Dtos.Requests.CreateWordsRequestData words,int userId)
         {
             List<WordOperationFailure> failures = new();

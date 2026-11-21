@@ -1,4 +1,5 @@
 using NihongoHub.Models.Entities;
+using System.Diagnostics.CodeAnalysis;
 
 namespace NihongoHub.Services
 {
@@ -48,7 +49,7 @@ namespace NihongoHub.Services
             return notebooks;
         }
 
-        public static Models.Entities.VocabularyNotebook? FindVocabularyNotebookById(int id,int userID,out VocabularyNotebookOperationFailure? failure)
+        public static Models.Entities.VocabularyNotebook? FindVocabularyNotebookById(int id,int userID,[NotNullWhen(true)] out VocabularyNotebookOperationFailure? failure)
         {
             string errorMessage = "";
             Logging.LogCategory errorCategory = Logging.LogCategory.None;
