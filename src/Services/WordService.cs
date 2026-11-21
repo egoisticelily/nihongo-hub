@@ -82,11 +82,7 @@ namespace NihongoHub.Services
             Logging.LogCategory errorCategory = Logging.LogCategory.None;
             List<Models.Entities.Word> words = new();
             failure = null;
-
-            if(string.IsNullOrWhiteSpace(query)){
-                failure = new($"不允许查询值为空",Logging.LogCategory.Unknown);
-                return new();
-            }
+            
             //去掉空白
             query = query.Trim();
 
@@ -118,8 +114,6 @@ namespace NihongoHub.Services
             }
 
             var wordData = FindWordsByIds(notebookData.tanngoidlist,userID,out failure);
-
-            failure = new();
             return wordData;
         }
 
