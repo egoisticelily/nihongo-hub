@@ -1,4 +1,3 @@
-using Microsoft.VisualBasic;
 
 namespace NihongoHub.API
 {
@@ -52,6 +51,7 @@ namespace NihongoHub.API
                 {
                     messagesList.Add(new()
                     {
+                        id = word.id,
                         errormessage = errorMessage,
                         errorcategory = errorCategory.ToString()
                     });

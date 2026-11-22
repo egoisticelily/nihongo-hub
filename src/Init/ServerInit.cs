@@ -68,6 +68,35 @@ namespace NihongoHub.Init{
         {
             app.UseDefaultFiles();
             app.UseStaticFiles();
+
+            //Auth
+            app.MapPost("/api/v1/auth/login",(Func<HttpContext,Task<IResult>>)API.AuthAPI.Login);
+
+            //VocabularyNotebook
+            app.MapPost("/api/v1/vocabulary-notebooks/list",(Func<HttpContext,Task<IResult>>)API.VocabularyNotebookAPI.SearchAllVocabularyNotebook);
+
+            app.MapPost("/api/v1/vocabulary-notebooks/search-by-tag",(Func<HttpContext,Task<IResult>>)API.VocabularyNotebookAPI.SearchVocabularyNotebookByTag);
+
+            app.MapPost("/api/v1/vocabulary-notebooks/create",(Func<HttpContext,Task<IResult>>)API.VocabularyNotebookAPI.CreateVocabularyNotebook);
+
+            app.MapPost("/api/v1/vocabulary-notebooks/update",(Func<HttpContext,Task<IResult>>)API.VocabularyNotebookAPI.UpdateVocabularyNotebook);
+
+            app.MapPost("/api/v1/vocabulary-notebooks/delete",(Func<HttpContext,Task<IResult>>)API.VocabularyNotebookAPI.DeleteVocabularyNotebook);
+
+            app.MapPost("/api/v1/vocabulary-notebooks/delete-batch",(Func<HttpContext,Task<IResult>>)API.VocabularyNotebookAPI.DeleteVocabularyNotebookByList);
+
+            //Word
+            app.MapPost("/api/v1/words/search",(Func<HttpContext,Task<IResult>>)API.WordAPI.SearchWordByQuery);
+
+            app.MapPost("/api/v1/words/search-by-notebook",(Func<HttpContext,Task<IResult>>)API.WordAPI.SearchWordByVocabularyNotebookId);
+
+            app.MapPost("/api/v1/words/create",(Func<HttpContext,Task<IResult>>)API.WordAPI.CreateWord);
+
+            app.MapPost("/api/v1/words/update",(Func<HttpContext,Task<IResult>>)API.WordAPI.UpdateWord);
+
+            app.MapPost("/api/v1/words/delete",(Func<HttpContext,Task<IResult>>)API.WordAPI.DeleteWord);
+
+            app.MapPost("/api/v1/words/delete-batch",(Func<HttpContext,Task<IResult>>)API.WordAPI.DeleteWordbyList);
         }
     }
 }

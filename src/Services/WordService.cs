@@ -1,4 +1,3 @@
-using System.Net;
 
 namespace NihongoHub.Services
 {
@@ -131,6 +130,12 @@ namespace NihongoHub.Services
 
             foreach(var word in words.words)
             {
+                if(word == null)
+                {
+                    failures.Add(new("内容为空",Logging.LogCategory.None));
+                    continue;
+                }
+
                 if(!Data.WordRepository.Insert(word.ToWordEntity(userId),out errorMessage,out errorCategory))
                 {
                     //创建时单词还不具有id,这里返回kana明确错误的单词
@@ -164,6 +169,12 @@ namespace NihongoHub.Services
 
             foreach (var word in words.words)
             {
+                if(word == null)
+                {
+                    failures.Add(new("内容为空",Logging.LogCategory.None));
+                    continue;
+                }
+
                 if(!Data.WordRepository.FindWordById(word.id,out var _word,out errorMessage,out errorCategory))
                 {
                     failures.Add(new(errorMessage,errorCategory,word.id));
@@ -222,15 +233,12 @@ namespace NihongoHub.Services
             List<WordOperationFailure> failures = new();
             string errorMessage = "";
             Logging.LogCategory errorCategory = Logging.LogCategory.None;
-            int number = 0;
 
             foreach(var word in words.words)
             {
-                ++number;
-
                 if(word == null)
                 {
-                    failures.Add(new($"[{number}]请求为空",Logging.LogCategory.Unknown,number));
+                    failures.Add(new($"请求为空",Logging.LogCategory.None));
                     continue; 
                 }
 
