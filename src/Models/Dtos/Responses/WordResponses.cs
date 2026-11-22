@@ -2,10 +2,6 @@
 
 namespace NihongoHub.Models.Dtos.Responses
 {
-    ///返回多个单词
-    /// 
-    /// 这里定义的Word可供其他返回api使用
-    
     public class VocabularyNotebookReferenceResponse
     {
         public required int id {get;set;}
@@ -25,22 +21,25 @@ namespace NihongoHub.Models.Dtos.Responses
         public required DateTime createdat {get;set;} //UTC
         public required DateTime updatedat {get;set;} //UTC
     }
-    public class WordsResponseData
-    {
-        public required List<WordResponse> words {get;set;}
-    }
 
-    public class SearchWordsResponse : ApiResponse<WordsResponseData>;
-
-    public class DeleteWordsSummaryResponseData
+    public class Message
     {
         public int? id {get;set;}
         public required string errormessage {get;set;}
         public string? errorcategory {get;set;}
     }
+
+    public class WordsResponseData
+    {
+        public required List<WordResponse> words {get;set;}
+        public required List<Message> messages {get;set;}
+    }
+
+
+    public class SearchWordsResponse : ApiResponse<WordsResponseData>;
     public class DeleteWordsByListSummaryResponseData
     {
-        public required List<DeleteWordsSummaryResponseData> responseDataList {get;set;}
+        public required List<Message> responseDataList {get;set;}
     }
     public class DeleteWordsByListSummaryResponse : ApiResponse<DeleteWordsByListSummaryResponseData>;
 

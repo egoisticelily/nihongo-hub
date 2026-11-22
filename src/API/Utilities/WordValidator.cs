@@ -1,12 +1,16 @@
+using Microsoft.VisualBasic;
+
 namespace NihongoHub.API
 {
     public static class WordValidator
     {
-        public static Models.Dtos.Responses.WordResponse? DatabaseWordEntitiesToResponse(Models.Entities.Word word)
+        public static Models.Dtos.Responses.WordResponse? DatabaseWordEntitiesToResponse(Models.Entities.Word word,out string errorMessage,out Logging.LogCategory errorCategory)
         {
+            errorMessage = "";
+            errorCategory = Logging.LogCategory.None;
             List<Models.Dtos.Responses.VocabularyNotebookReferenceResponse> notebookList = new();
 
-            if(!Data.VocabularyNotebookRepository.FindVocabularyNotebooksByWordId(word.id,out var noteBooksByDB,out _,out _))
+            if(!Data.VocabularyNotebookRepository.FindVocabularyNotebooksByWordId(word.id,out var noteBooksByDB,out errorMessage,out errorCategory))
             {
                 return null;
             }
@@ -38,20 +42,30 @@ namespace NihongoHub.API
         public static Models.Dtos.Responses.WordsResponseData DatabaseWordEntitiesToResponseByList(List<Models.Entities.Word> wordList)
         {
             List<Models.Dtos.Responses.WordResponse> words = new();
+            List<Models.Dtos.Responses.Message> messagesList = new();
 
             foreach(var word in wordList)
             {
-                var wordByResponse = DatabaseWordEntitiesToResponse(word);
+                var wordByResponse = DatabaseWordEntitiesToResponse(word,out var errorMessage,out var errorCategory);
 
                 if(wordByResponse == null)
+                {
+                    messagesList.Add(new()
+                    {
+                        errormessage = errorMessage,
+                        errorcategory = errorCategory.ToString()
+                    });
                     continue;
+                }
+                    
 
                 words.Add(wordByResponse);
             }
 
             return new()
             {
-                words = words
+                words = words,
+                messages = messagesList
             };
         }
     }

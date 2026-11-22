@@ -68,9 +68,9 @@ namespace NihongoHub.Models.Dtos.Responses
             return responseDataList;
         }
 
-        public static List<DeleteWordsSummaryResponseData> WordOperationFailureListToResponseData(List<Services.WordOperationFailure> failuresList)
+        public static List<Message> WordOperationFailureListToResponseData(List<Services.WordOperationFailure> failuresList)
         {
-            List<DeleteWordsSummaryResponseData> responseDataList = new();
+            List<Message> responseDataList = new();
             foreach(var failures in failuresList)
             {
                 responseDataList.Add(new()

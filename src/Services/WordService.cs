@@ -82,7 +82,12 @@ namespace NihongoHub.Services
             Logging.LogCategory errorCategory = Logging.LogCategory.None;
             List<Models.Entities.Word> words = new();
             failure = null;
-            
+
+            if(string.IsNullOrWhiteSpace(query)){
+                failure = new($"不允许查询值为空",Logging.LogCategory.None);
+                return new();
+            }
+
             //去掉空白
             query = query.Trim();
 
@@ -217,9 +222,18 @@ namespace NihongoHub.Services
             List<WordOperationFailure> failures = new();
             string errorMessage = "";
             Logging.LogCategory errorCategory = Logging.LogCategory.None;
-            
+            int number = 0;
+
             foreach(var word in words.words)
             {
+                ++number;
+
+                if(word == null)
+                {
+                    failures.Add(new($"[{number}]请求为空",Logging.LogCategory.Unknown,number));
+                    continue; 
+                }
+
                 if(!Data.WordRepository.FindWordById(word.id,out var _word,out errorMessage,out errorCategory))
                 {
                     failures.Add(new(errorMessage,errorCategory,word.id));

@@ -89,6 +89,9 @@ namespace NihongoHub.API
                     case Logging.LogCategory.Unknown:
                         code = ApiCode.UnknownError;
                         break;
+                    case Logging.LogCategory.None:
+                        code = ApiCode.InvalidParameter;
+                        break;
                     default:
                         code = ApiCode.UnknownError;
                         break;
