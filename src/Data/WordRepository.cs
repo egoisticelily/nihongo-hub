@@ -112,7 +112,7 @@ namespace NihongoHub.Data
             }
             catch(Exception ex)
             {
-                Logging.LogReporter.Report(Logging.LogCategory.Database,Logging.LogLevel.Error,"[ERROR]查询单词时发生未知错误",ex);
+                Logging.LogReporter.Report(Logging.LogCategory.Unknown,Logging.LogLevel.Error,"[ERROR]查询单词时发生未知错误",ex);
 
                 words = new();
                 errorMessage="查询单词时发生未知错误";

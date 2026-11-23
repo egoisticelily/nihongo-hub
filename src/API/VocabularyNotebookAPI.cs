@@ -92,18 +92,7 @@ namespace NihongoHub.API
                 },statusCode:Models.Code.ApiCode.GetCorrespondingHttpcode(code));
             }
 
-            if(!API.Utilities.VocabularyNotebookValidator.GetDefaultNotebook(userData.UserId,out var defaultNotenook,out var errorMessage,out var errorCategory))
-            {
-                return Results.Json(new Models.Dtos.Responses.VocabularyNotebookListSummaryResponse()
-                {
-                    success = false,
-                    code = code, 
-                    message = $"[{errorCategory}] {errorMessage}",
-                    data = null
-                },statusCode:Models.Code.ApiCode.GetCorrespondingHttpcode(code));
-            }
-
-            notebookList.Add(defaultNotenook);
+            notebookList.Add(API.Utilities.VocabularyNotebookValidator.GetDefaultNotebook(userData.UserId));
             
             return Results.Json(new Models.Dtos.Responses.VocabularyNotebookListSummaryResponse()
             {

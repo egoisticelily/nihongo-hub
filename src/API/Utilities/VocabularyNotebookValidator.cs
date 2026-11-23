@@ -2,11 +2,9 @@ namespace NihongoHub.API.Utilities
 {
     public static class VocabularyNotebookValidator
     {
-        public static bool GetDefaultNotebook(int userID,out Models.Entities.VocabularyNotebook notebookList,out string? errorMessage,out string? errorCategory)
+        public static Models.Entities.VocabularyNotebook GetDefaultNotebook(int userID)
         {
-            errorCategory = "";
-            errorMessage = "";
-            notebookList = new()
+            Models.Entities.VocabularyNotebook notebookList = new()
             {
                 id = -1,
                 userid = userID,
@@ -14,25 +12,11 @@ namespace NihongoHub.API.Utilities
                 note = "",
                 tanngoidlist = new(),
                 tags = new(),
-                createdat = DateTime.UtcNow,
-                updatedat = DateTime.UtcNow
+                createdat = new(2000,01,01),
+                updatedat = new(2000,01,01)
             };
 
-            var wordsList = Services.WordService.FindWordsByUserid(userID,out var failure);
-
-            if(failure != null)
-            {
-                errorCategory = failure.errorCategory.ToString();
-                errorMessage = failure.errorMessage;
-                return false;
-            }
-            
-            foreach(var word in wordsList)
-            {
-                notebookList.tanngoidlist.Add(word.id);
-            }
-
-            return true;
+            return notebookList;
         }
     }
 }
