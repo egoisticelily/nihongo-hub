@@ -67,7 +67,7 @@ namespace NihongoHub.API
             }
 
             var notebookList = Services.VocabularyNotebookService.FindVocabularyNotebooksByUserid(userData.UserId,out var failures);
-
+            
             if(failures != null)
             {
                 switch (failures.errorCategory)
@@ -92,6 +92,19 @@ namespace NihongoHub.API
                 },statusCode:Models.Code.ApiCode.GetCorrespondingHttpcode(code));
             }
 
+            if(!API.Utilities.VocabularyNotebookValidator.GetDefaultNotebook(userData.UserId,out var defaultNotenook,out var errorMessage,out var errorCategory))
+            {
+                return Results.Json(new Models.Dtos.Responses.VocabularyNotebookListSummaryResponse()
+                {
+                    success = false,
+                    code = code, 
+                    message = $"[{errorCategory}] {errorMessage}",
+                    data = null
+                },statusCode:Models.Code.ApiCode.GetCorrespondingHttpcode(code));
+            }
+
+            notebookList.Add(defaultNotenook);
+            
             return Results.Json(new Models.Dtos.Responses.VocabularyNotebookListSummaryResponse()
             {
                 success = true,

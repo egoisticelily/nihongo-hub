@@ -91,6 +91,37 @@ namespace NihongoHub.Data
             return true;
         }
 
+        public static bool FindWordsByUserid(int userID,out List<Models.Entities.Word> words,out string errorMessage,out Logging.LogCategory errorCategory)
+        {
+            errorMessage = "";
+            errorCategory = Logging.LogCategory.None;
+            words = new();
+
+            try
+            {
+                words = Init.DatabaseInit.Current.Words.Find(x => x.userid == userID).ToList();
+            }
+            catch(LiteException ex)
+            {
+                Logging.LogReporter.Report(Logging.LogCategory.Database,Logging.LogLevel.Error,"[ERROR]查询单词时数据库错误",ex);
+
+                words = new();
+                errorMessage=  "查询单词时数据库错误";
+                errorCategory = Logging.LogCategory.Database;
+                return false;
+            }
+            catch(Exception ex)
+            {
+                Logging.LogReporter.Report(Logging.LogCategory.Database,Logging.LogLevel.Error,"[ERROR]查询单词时发生未知错误",ex);
+
+                words = new();
+                errorMessage="查询单词时发生未知错误";
+                errorCategory = Logging.LogCategory.Unknown;
+                return false;
+            }
+            return true;
+        }
+
         public static bool Insert(Models.Entities.Word word,out string errorMessage,out Logging.LogCategory errorCategory)
         {
             errorMessage = "";

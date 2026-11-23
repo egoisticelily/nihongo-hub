@@ -99,10 +99,21 @@ namespace NihongoHub.Services
             return SortWordsByRelevance(words, query);
         }
 
-        public static List<Models.Entities.Word> FindWordsByNotebookId(int id,int userID,out List<WordOperationFailure> failure)
+        public static List<Models.Entities.Word> FindWordsByNotebookId(int id,int userID,out List<WordOperationFailure> failures)
         {
             List<Models.Entities.Word> words = new();
-            failure = new();
+            failures = new();
+
+            if(id == -1)
+            {
+                var wordsList = FindWordsByUserid(userID,out var failure);
+                if(failure != null)
+                {
+                    failures.Add(failure);
+                }
+                return  wordsList;
+            }
+
             var notebookData = VocabularyNotebookService.FindVocabularyNotebookById(id,userID,out var _failure);
 
             if(_failure == null)
@@ -112,13 +123,25 @@ namespace NihongoHub.Services
 
             if(notebookData == null)
             {
-                failure = new();
-                failure.Add(new(_failure.errorMessage,_failure.errorCategory,_failure.id));
+                failures = new();
+                failures.Add(new(_failure.errorMessage,_failure.errorCategory,_failure.id));
                 return words;
             }
 
-            var wordData = FindWordsByIds(notebookData.tanngoidlist,userID,out failure);
+            var wordData = FindWordsByIds(notebookData.tanngoidlist,userID,out failures);
             return wordData;
+        }
+
+        public static List<Models.Entities.Word> FindWordsByUserid(int userID,out WordOperationFailure? failure)
+        {
+            List<Models.Entities.Word> words = new();
+            failure = null;
+
+            if(!Data.WordRepository.FindWordsByUserid(userID,out words,out var errorMessage,out var errorCategory))
+            {
+                failure = new(errorMessage,errorCategory);
+            }
+            return words;
         }
 
         public static List<WordOperationFailure> CreateWords(Models.Dtos.Requests.CreateWordsRequestData words,int userId)
