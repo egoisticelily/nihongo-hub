@@ -12,8 +12,8 @@ namespace NihongoHub.API.Utilities
                 note = "",
                 tanngoidlist = new(),
                 tags = new(),
-                createdat = new(2000,01,01),
-                updatedat = new(2000,01,01)
+                createdat = new(2000,01,01,0,0,0,DateTimeKind.Utc),
+                updatedat = new(2000,01,01,0,0,0,DateTimeKind.Utc)
             };
 
             return notebookList;
