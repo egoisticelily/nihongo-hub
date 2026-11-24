@@ -257,7 +257,7 @@ namespace NihongoHub.Services
 
             if(notebook == null)
             {
-                return new($"单词本不存在",Logging.LogCategory.None,wordID);
+                return new($"单词本不存在",Logging.LogCategory.None,notebookID);
             }
 
             var word = Services.WordService.FindWordById(wordID,userID,out var _failure);
@@ -296,7 +296,7 @@ namespace NihongoHub.Services
 
             if(notebook == null)
             {
-                return new($"单词本不存在",Logging.LogCategory.None,wordID);
+                return new($"单词本不存在",Logging.LogCategory.None,notebookID);
             }
 
             var word = Services.WordService.FindWordById(wordID,userID,out var _failure);
