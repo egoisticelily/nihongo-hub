@@ -206,7 +206,7 @@ namespace NihongoHub.Services
             return failures;
         }
 
-        public static List<VocabularyNotebookOperationFailure> RemoveWordFromNotebooks(int wordID)
+        public static List<VocabularyNotebookOperationFailure> RemoveWordFromAllNotebooks(int wordID)
         {
             string errorMessage = "";
             Logging.LogCategory errorCategory = Logging.LogCategory.None;
@@ -241,6 +241,77 @@ namespace NihongoHub.Services
             }
             
             return failures;
+        }
+
+        public static VocabularyNotebookOperationFailure? AddWordInNotebook(int wordID,int notebookID,int userId)
+        {
+            string errorMessage = "";
+            Logging.LogCategory errorCategory = Logging.LogCategory.None;
+            
+            if(!Data.VocabularyNotebookRepository.FindVocabularyNotebooksByUserId(userId,out var notebookList,out errorMessage,out errorCategory))
+            {
+                return new($"[严重错误] - 获取对应单词本时发生严重错误 \n - {errorMessage}",errorCategory,notebookID);
+            }
+
+            var notebook = notebookList.Find(x => x.id == wordID);
+
+            if(notebook == null)
+            {
+                return new($"单词本不存在",errorCategory,wordID);
+            }
+
+            if(!Data.WordRepository.FindWordById(wordID,out var word,out errorMessage,out errorCategory))
+            {
+                return new($"[严重错误] - 获取对应单词时发生严重错误 \n - {errorMessage}",errorCategory,wordID);
+            }
+            if(word == null)
+            {
+                return new($"单词不存在",errorCategory,wordID);
+            }
+            
+            notebook.tanngoidlist.Add(word.id);
+            if(!Data.VocabularyNotebookRepository.Update(notebook,out errorMessage,out errorCategory))
+            {
+                return new($"更新单词本时发生错误 \n - {errorMessage}",errorCategory,wordID);
+            }
+            
+            return null;
+        }
+
+        public static VocabularyNotebookOperationFailure? RemoveWordFromNotebook(int wordID,int notebookID,int userID)
+        {
+            string errorMessage = "";
+            Logging.LogCategory errorCategory = Logging.LogCategory.None;
+            
+            if(!Data.VocabularyNotebookRepository.FindVocabularyNotebooksByUserId(userID,out var notebookList,out errorMessage,out errorCategory))
+            {
+                return new($"[严重错误] - 获取对应单词本时发生严重错误 \n - {errorMessage}",errorCategory,notebookID);
+            }
+
+            var notebook = notebookList.Find(x => x.id == wordID);
+
+            if(notebook == null)
+            {
+                return new($"单词本不存在",errorCategory,wordID);
+            }
+
+            if(!Data.WordRepository.FindWordById(wordID,out var word,out errorMessage,out errorCategory))
+            {
+                return new($"[严重错误] - 获取对应单词时发生严重错误 \n - {errorMessage}",errorCategory,wordID);
+            }
+            if(word == null)
+            {
+                return new($"单词不存在",errorCategory,wordID);
+            }
+            
+            notebook.tanngoidlist.RemoveAll(x => x == word.id);
+
+            if(!Data.VocabularyNotebookRepository.Update(notebook,out errorMessage,out errorCategory))
+            {
+                return new($"更新单词本时发生错误 \n - {errorMessage}",errorCategory,wordID);
+            }
+            
+            return null;
         }
     }
 }

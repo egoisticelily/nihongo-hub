@@ -283,7 +283,7 @@ namespace NihongoHub.Services
                     continue;
                 }
 
-                var DeleteNotebooksInWordFailure = VocabularyNotebookService.RemoveWordFromNotebooks(word.id);
+                var DeleteNotebooksInWordFailure = VocabularyNotebookService.RemoveWordFromAllNotebooks(word.id);
 
                 if(DeleteNotebooksInWordFailure.Count() != 0)
                 {
@@ -323,7 +323,7 @@ namespace NihongoHub.Services
                 return new($"该单词不属于该用户",Logging.LogCategory.None,word.id);
             }
 
-            var DeleteNotebooksInWordFailure = VocabularyNotebookService.RemoveWordFromNotebooks(word.id);
+            var DeleteNotebooksInWordFailure = VocabularyNotebookService.RemoveWordFromAllNotebooks(word.id);
 
             if(DeleteNotebooksInWordFailure.Count() != 0)
             {

@@ -66,9 +66,6 @@ namespace NihongoHub.Init{
 
         private static void ConfigureRoutes(WebApplication app)
         {
-            app.UseDefaultFiles();
-            app.UseStaticFiles();
-
             //Auth
             app.MapPost("/api/v1/auth/login",(Func<HttpContext,Task<IResult>>)API.AuthAPI.Login);
 
@@ -84,6 +81,10 @@ namespace NihongoHub.Init{
             app.MapPost("/api/v1/vocabulary-notebooks/delete",(Func<HttpContext,Task<IResult>>)API.VocabularyNotebookAPI.DeleteVocabularyNotebook);
 
             app.MapPost("/api/v1/vocabulary-notebooks/delete-batch",(Func<HttpContext,Task<IResult>>)API.VocabularyNotebookAPI.DeleteVocabularyNotebookByList);
+
+            app.MapPost("/api/v1/vocabulary-notebooks/addword-in-notebook",(Func<HttpContext,Task<IResult>>)API.VocabularyNotebookAPI.AddWordInNoteBook);
+
+            app.MapPost("/api/v1/vocabulary-notebooks/removeword-in-notebook",(Func<HttpContext,Task<IResult>>)API.VocabularyNotebookAPI.RemoveWordFromNoteBook);
 
             //Word
             app.MapPost("/api/v1/words/search",(Func<HttpContext,Task<IResult>>)API.WordAPI.SearchWordByQuery);
