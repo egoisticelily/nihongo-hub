@@ -243,15 +243,15 @@ namespace NihongoHub.Services
             return failures;
         }
 
-        public static VocabularyNotebookOperationFailure? AddWordInNotebook(int wordID,int notebookID,int userId)
+        public static VocabularyNotebookOperationFailure? AddWordInNotebook(int wordID,int notebookID,int userID)
         {
             string errorMessage = "";
             Logging.LogCategory errorCategory = Logging.LogCategory.None;
             
-            if(!Data.VocabularyNotebookRepository.FindVocabularyNotebooksByUserId(userId,out var notebookList,out errorMessage,out errorCategory))
-            {
-                return new($"[严重错误] - 获取对应单词本时发生严重错误 \n - {errorMessage}",errorCategory,notebookID);
-            }
+            var notebookList = FindVocabularyNotebooksByUserid(userID,out var failure);
+
+            if(failure != null)
+                return failure;
 
             var notebook = notebookList.Find(x => x.id == notebookID);
 
@@ -260,14 +260,13 @@ namespace NihongoHub.Services
                 return new($"单词本不存在",Logging.LogCategory.None,wordID);
             }
 
-            if(!Data.WordRepository.FindWordById(wordID,out var word,out errorMessage,out errorCategory))
-            {
-                return new($"[严重错误] - 获取对应单词时发生严重错误 \n - {errorMessage}",errorCategory,wordID);
-            }
+            var word = Services.WordService.FindWordById(wordID,userID,out var _failure);
+
+            if(_failure != null)
+                return new(_failure.errorMessage,_failure.errorCategory,_failure.id);
             if(word == null)
-            {
-                return new($"单词不存在",Logging.LogCategory.None,wordID);
-            }
+                return new("单词不存在",Logging.LogCategory.None);
+
             if(notebook.tanngoidlist.Contains(word.id))
             {
                 return new($"单词已存在",Logging.LogCategory.None,wordID);
@@ -287,10 +286,10 @@ namespace NihongoHub.Services
             string errorMessage = "";
             Logging.LogCategory errorCategory = Logging.LogCategory.None;
             
-            if(!Data.VocabularyNotebookRepository.FindVocabularyNotebooksByUserId(userID,out var notebookList,out errorMessage,out errorCategory))
-            {
-                return new($"[严重错误] - 获取对应单词本时发生严重错误 \n - {errorMessage}",errorCategory,notebookID);
-            }
+            var notebookList = FindVocabularyNotebooksByUserid(userID,out var failure);
+
+            if(failure != null)
+                return failure;
 
             var notebook = notebookList.Find(x => x.id == notebookID);
 
@@ -299,14 +298,12 @@ namespace NihongoHub.Services
                 return new($"单词本不存在",Logging.LogCategory.None,wordID);
             }
 
-            if(!Data.WordRepository.FindWordById(wordID,out var word,out errorMessage,out errorCategory))
-            {
-                return new($"[严重错误] - 获取对应单词时发生严重错误 \n - {errorMessage}",errorCategory,wordID);
-            }
+            var word = Services.WordService.FindWordById(wordID,userID,out var _failure);
+
+            if(_failure != null)
+                return new(_failure.errorMessage,_failure.errorCategory,_failure.id);
             if(word == null)
-            {
-                return new($"单词不存在",Logging.LogCategory.None,wordID);
-            }
+                return new("单词不存在",Logging.LogCategory.None);
             
             notebook.tanngoidlist.RemoveAll(x => x == word.id);
 
