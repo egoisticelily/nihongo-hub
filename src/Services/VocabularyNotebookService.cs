@@ -253,11 +253,11 @@ namespace NihongoHub.Services
                 return new($"[严重错误] - 获取对应单词本时发生严重错误 \n - {errorMessage}",errorCategory,notebookID);
             }
 
-            var notebook = notebookList.Find(x => x.id == wordID);
+            var notebook = notebookList.Find(x => x.id == notebookID);
 
             if(notebook == null)
             {
-                return new($"单词本不存在",errorCategory,wordID);
+                return new($"单词本不存在",Logging.LogCategory.None,wordID);
             }
 
             if(!Data.WordRepository.FindWordById(wordID,out var word,out errorMessage,out errorCategory))
@@ -266,7 +266,11 @@ namespace NihongoHub.Services
             }
             if(word == null)
             {
-                return new($"单词不存在",errorCategory,wordID);
+                return new($"单词不存在",Logging.LogCategory.None,wordID);
+            }
+            if(notebook.tanngoidlist.Contains(word.id))
+            {
+                return new($"单词已存在",Logging.LogCategory.None,wordID);
             }
             
             notebook.tanngoidlist.Add(word.id);
@@ -288,11 +292,11 @@ namespace NihongoHub.Services
                 return new($"[严重错误] - 获取对应单词本时发生严重错误 \n - {errorMessage}",errorCategory,notebookID);
             }
 
-            var notebook = notebookList.Find(x => x.id == wordID);
+            var notebook = notebookList.Find(x => x.id == notebookID);
 
             if(notebook == null)
             {
-                return new($"单词本不存在",errorCategory,wordID);
+                return new($"单词本不存在",Logging.LogCategory.None,wordID);
             }
 
             if(!Data.WordRepository.FindWordById(wordID,out var word,out errorMessage,out errorCategory))
@@ -301,7 +305,7 @@ namespace NihongoHub.Services
             }
             if(word == null)
             {
-                return new($"单词不存在",errorCategory,wordID);
+                return new($"单词不存在",Logging.LogCategory.None,wordID);
             }
             
             notebook.tanngoidlist.RemoveAll(x => x == word.id);
