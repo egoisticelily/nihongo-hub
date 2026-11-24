@@ -273,6 +273,7 @@ namespace NihongoHub.Services
             }
             
             notebook.tanngoidlist.Add(word.id);
+            notebook.updatedat = DateTime.UtcNow;
             if(!Data.VocabularyNotebookRepository.Update(notebook,out errorMessage,out errorCategory))
             {
                 return new($"更新单词本时发生错误 \n - {errorMessage}",errorCategory,wordID);
@@ -306,6 +307,7 @@ namespace NihongoHub.Services
                 return new("单词不存在",Logging.LogCategory.None);
             
             notebook.tanngoidlist.RemoveAll(x => x == word.id);
+            notebook.updatedat = DateTime.UtcNow;
 
             if(!Data.VocabularyNotebookRepository.Update(notebook,out errorMessage,out errorCategory))
             {
