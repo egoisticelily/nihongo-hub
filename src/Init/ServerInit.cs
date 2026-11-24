@@ -97,6 +97,9 @@ namespace NihongoHub.Init{
             app.MapPost("/api/v1/words/delete",(Func<HttpContext,Task<IResult>>)API.WordAPI.DeleteWord);
 
             app.MapPost("/api/v1/words/delete-batch",(Func<HttpContext,Task<IResult>>)API.WordAPI.DeleteWordbyList);
+
+            //StatusAPI
+            app.MapPost("/api/v1/status/heartbeat-detection",(Func<HttpContext,Task<IResult>>)API.StatusAPI.HeartbeatDetection);
         }
     }
 }

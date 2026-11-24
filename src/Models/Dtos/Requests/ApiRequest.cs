@@ -7,4 +7,8 @@ namespace NihongoHub.Models.Dtos.Requests
         public string? token {get;set;}
         public TData? data {get;set;}
     }
+    public class ApiRequest
+    {
+        public string? token {get;set;}
+    }
 }
