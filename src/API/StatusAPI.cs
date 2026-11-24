@@ -42,19 +42,7 @@ namespace NihongoHub.API
 
             if(!Utilities.UserValidator.ValidateUser(request.token,out var userData,out var code))
             {
-                string message = "";
-                switch (code)
-                {
-                    case ApiCode.TokenMissing:
-                        message = "token错误";
-                        break;
-                    case ApiCode.UnknownError:
-                        message = "未知错误";
-                        break;
-                    default:
-                        message = "查询时出现错误";
-                        break;
-                }
+                string message = "查询时出现错误";
 
                 return Results.Json(new Models.Dtos.Responses.ApiResponse()
                 {
