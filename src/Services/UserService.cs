@@ -135,6 +135,31 @@ namespace NihongoHub.Services
             return true;
         }
         
+        public static bool UserPasswordChange(int userID,string passWord,out string errorMessage,out Logging.LogCategory errorCategory)
+        {
+            errorMessage = "";
+            errorCategory = Logging.LogCategory.None;
 
+            if(!Data.UserRepository.FindUserById(userID,out var userData,out errorMessage,out errorCategory))
+            {
+                return false;
+            }
+
+            if(userData == null)
+            {
+                errorMessage = "用户不存在";
+                errorCategory = Logging.LogCategory.None;
+                return false;
+            }
+
+            userData.passwordhash = BCrypt.Net.BCrypt.HashPassword(passWord);
+
+            if (!Data.UserRepository.Update(userData,out errorMessage,out errorCategory))
+            {
+                return false;
+            }
+
+            return true;
+        }
     }
 }

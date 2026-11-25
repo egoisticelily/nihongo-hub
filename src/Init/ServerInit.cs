@@ -69,6 +69,9 @@ namespace NihongoHub.Init{
             //Auth
             app.MapPost("/api/v1/auth/login",(Func<HttpContext,Task<IResult>>)API.AuthAPI.Login);
 
+            //User
+            app.MapPost("/api/v1/user/password-change ",(Func<HttpContext,Task<IResult>>)API.UserAPI.UserPasswordChange);
+
             //VocabularyNotebook
             app.MapPost("/api/v1/vocabulary-notebooks/list",(Func<HttpContext,Task<IResult>>)API.VocabularyNotebookAPI.SearchAllVocabularyNotebook);
 
