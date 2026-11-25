@@ -177,7 +177,7 @@ namespace NihongoHub.Services
             string errorMessage = "";
             Logging.LogCategory errorCategory = Logging.LogCategory.None;
 
-            foreach (var noteBook in noteBooks.noteBooks)
+            foreach (var noteBook in noteBooks.notebooks)
             {
                 if(!Data.VocabularyNotebookRepository.FindVocabularyNotebookById(noteBook.id,out var _noteBook,out errorMessage,out errorCategory))
                 {

@@ -70,7 +70,7 @@ namespace NihongoHub.Models.Dtos.Requests
 
     public class DeleteVocabularyNotebooksRequestData
     {
-        public required List<DeleteVocabularyNotebookRequestData> noteBooks {get;set;}
+        public required List<DeleteVocabularyNotebookRequestData> notebooks {get;set;}
     }
     public class DeleteVocabularyNotebooksRequest : ApiRequest<DeleteVocabularyNotebooksRequestData>;
     public class AddOrRemoveWordsRequestData

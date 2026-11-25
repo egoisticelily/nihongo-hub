@@ -75,6 +75,7 @@ namespace NihongoHub.API
                 return Results.Json(new Models.Dtos.Responses.ApiResponse()
                 {
                     success = false,
+                    message = "请求错误",
                     code = ApiCode.EmptyRequest, 
                 },statusCode:Models.Code.ApiCode.GetCorrespondingHttpcode(ApiCode.EmptyRequest));
             }
