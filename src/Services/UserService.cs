@@ -140,6 +140,13 @@ namespace NihongoHub.Services
             errorMessage = "";
             errorCategory = Logging.LogCategory.None;
 
+            if (String.IsNullOrWhiteSpace(passWord))
+            {
+                errorMessage = "密码不允许为空";
+                errorCategory = Logging.LogCategory.None;
+                return false;
+            }
+
             if(!Data.UserRepository.FindUserById(userID,out var userData,out errorMessage,out errorCategory))
             {
                 return false;
