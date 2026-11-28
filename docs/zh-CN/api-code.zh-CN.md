@@ -1,6 +1,6 @@
 # API Code 编号规范
 
-> **规范版本：** 0.1.0 Bata
+> **规范版本：** 0.1.0 Beta
 > **适用范围：** NihongoHub 后端 HTTP API
 
 API Code 是 NihongoHub 自行定义的应用层代码，用于标识 API 操作结果及具体错误原因，便于客户端识别和处理。

@@ -27,7 +27,3 @@ Initial Demo release.
 - **Fixed**: Bug fixes and corrections to unexpected behavior.
 - **Security**: Security fixes and improvements.
 - **Removed**: Removed features, APIs, or configuration options.
-
-When preparing a release, organize the completed changes under the corresponding version and add the release date.
-
-For changes that may affect client compatibility, clearly describe the impact on APIs, data structures, and configuration.

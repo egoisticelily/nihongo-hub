@@ -1,4 +1,4 @@
-# Security Policy
+# 安全政策
 
 ## 项目安全状态
 
