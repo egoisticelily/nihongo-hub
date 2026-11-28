@@ -31,7 +31,7 @@ namespace NihongoHub.Init
                     return;
                 }
 
-                Logging.LogReporter.Secret($"[SECRET] 默认用户创建成功 文件已写入: Config/initial-admin-credentials.txt\n username: {userName}\n password: {password}");
+                Logging.LogReporter.Secret($"[SECRET] 默认用户创建成功 文件已写入: Config/initial-admin-credentials.txt");
                 
                 return;
             }

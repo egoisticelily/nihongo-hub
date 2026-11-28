@@ -1,59 +1,141 @@
-# NihongoHub
+# NihongoHub Server
 
-> ⚠️ **Notice: This project is not yet complete!**
+> ⚠️ **Demo Stage**
 >
-> This project is still in its early stages of development. There is no release ready for general use yet. Features, APIs, data models, and configuration formats may change in ways that are not compatible with previous versions. Do not use the current code in a production environment.
+> NihongoHub Server is currently in the demo stage. Basic features such as user login, Japanese word management, and word notebook management have been implemented.
+>
+> The project is still under active development. APIs, data models, and configuration settings may change. This version is mainly for trying out the features and development testing. It is not recommended for production use or for storing important data.
 
 [简体中文](docs/zh-CN/README.zh-CN.md) | [日本語](docs/ja-JP/README.ja.md)
 
-NihongoHub is a Japanese learning platform for managing and practicing Japanese vocabulary.
+NihongoHub Server is the backend service of the NihongoHub project. It handles user login, data storage, and HTTP APIs for clients.
 
-This project aims to help Japanese learners remember Japanese words more effectively. When practicing vocabulary on devices such as smartphones, learners may face several difficulties. For example, the system's Japanese input method may suggest words or predict what the user wants to type. Some applications also cannot provide practice based on the actual words that users have learned.
+The project aims to provide a Japanese vocabulary service that users can run and manage by themselves. Users can run their own server and manage Japanese words, word notebooks, and related data through compatible clients.
 
-NihongoHub aims to solve these problems and provide a Japanese learning system that users can manage themselves. Users can freely add words to their vocabulary notebooks and organize them into different groups. They can also practice and test their knowledge using selected notebooks.
+NihongoHub uses a separate design for the client and server. The server handles data and related tasks, while the client provides the user interface and features. Users can run their own server and connect to it with a client that supports the NihongoHub API.
 
-The frontend will provide a custom Japanese input feature. Users will be able to enter kanji and kana without relying on their system's Japanese input method. This helps prevent input suggestions and predictions from affecting the user's answers.
+## Project Components
 
-During vocabulary tests, users must actually type the correct kanji or kana as their answers instead of choosing from multiple options.
+NihongoHub currently has a server and a separate client:
 
-We currently plan to provide the features described above. More features may be added in the future.
+- **NihongoHub Server:** This repository. It provides the backend service, data storage, user login, and HTTP APIs.
+- **NihongoHub App:** An Android / iOS app built with Flutter. It provides mobile features and Japanese vocabulary practice.
 
-The project is currently focused on browser-based use. We also plan to develop mobile applications in the future.
+Client repository: [egoisticelily/nihongohub-app](https://github.com/egoisticelily/nihongohub-app)
 
-## Core Features
+NihongoHub Server does not provide a public hosted service. Users need to run their own server and set the server address and account information in the client.
 
-- **Custom Japanese input:** Enter kanji and kana without relying on the system's Japanese input method.
-- **Vocabulary practice and tests:** Test your knowledge by typing answers. (Score recording is not yet implemented.)
-- **Vocabulary management:** Manage Japanese words, including kanji, kana, pitch accent, meanings, and notes.
-- **Vocabulary notebooks:** Create notebooks and add custom tags.
-- **User management.**
+## Current Features
 
-The features listed above describe the project's plans. Not all of them have been implemented yet.
+The following features have been implemented or have basic support in the current demo:
+
+- **User login**
+- **User identity checks**
+- **Password management**
+- **Japanese word management**
+- **Word search**
+- **Word notebook management**
+- **Word and notebook links**
+- **Server status checks**
+
+## Features Not Yet Completed
+
+- **Creating accounts for regular users**
+- **Admin features for managing other users**
+- **Server features for Japanese vocabulary practice**
 
 ## Technology Stack
 
-- **Backend:** C# / ASP.NET Core Minimal API (.NET 10)
+- **Language:** C#
+- **Framework:** ASP.NET Core Minimal API (.NET 10)
 - **Database:** LiteDB
 - **Authentication:** JWT
+- **Password hashing:** BCrypt
 - **Logging:** Serilog
-- **Frontend (planned):** HTML, CSS, and JavaScript
 
-## Repository Structure
+## Quick Start
 
-- `src/` — Backend source code
-- `web/` — Frontend source code (planned; this directory does not exist in the repository yet)
+### Requirements
 
-## Development
+- .NET 10 SDK
 
-Requires the .NET 10 SDK.
-
-To build the project:
+### Get the Source Code
 
 ```bash
-dotnet build src
+git clone https://github.com/egoisticelily/nihongo-hub.git
+cd nihongo-hub
 ```
 
-The project is still under active development and is not yet ready for production use.
+### Build the Project
+
+Enter the `src/` directory and use the .NET CLI to build or publish the project as usual.
+
+### Start the Server
+
+When using a Release package, you can run the executable file directly.
+
+When building the project yourself, it is recommended to publish it as an executable file before running it.
+
+On the first start, the server creates a `Config` directory in the application's directory. It also creates the default configuration file and database when needed.
+
+If there are no users in the database, the server creates a default admin account. The initial login details are saved in:
+
+```text
+Config/initial-admin-credentials.txt
+```
+
+Keep these details safe. Change the default password after your first login. Do not share this file or the password with others.
+
+## Server Configuration
+
+On the first start, the server creates the following files and directory:
+
+```text
+Config/
+├── config.json
+├── nihongo.db
+└── initial-admin-credentials.txt
+```
+
+- `config.json`: Server configuration file.
+- `nihongo.db`: Default LiteDB database file.
+- `initial-admin-credentials.txt`: Initial login details. This file is only created when the default admin account is first created.
+
+The server address, listening port, HTTPS settings, database file path, and JWT settings are managed through `config.json`.
+
+The default configuration uses HTTP and listens on `0.0.0.0:5000`. It is suitable for early testing on a local or trusted network, but should not be used directly for public access.
+
+For public access or other untrusted networks, configure HTTPS and limit access to the server.
+
+Keep your configuration files safe, especially the JWT key, HTTPS certificate, and certificate password. Do not share your configuration or database files publicly.
+
+## API
+
+The server provides features to clients through HTTP APIs.
+
+The main API groups are:
+
+- Authentication (Auth)
+- User-related APIs (User)
+- Japanese word management (Words)
+- Word notebook management (Vocabulary Notebooks)
+- Server status checks (Status)
+
+Detailed API information will be maintained separately.
+
+## Development Status
+
+NihongoHub Server is still in the demo stage.
+
+Basic server setup, database access, user login, and vocabulary management have been implemented. However, some features are not yet complete, and the project has not been fully tested for production use.
+
+APIs, data structures, and configuration settings may change in future updates. It is recommended to back up your database and configuration files before updating.
+
+## Feedback
+
+To report a problem or suggest a feature, please use GitHub Issues:
+
+[GitHub Issues](https://github.com/egoisticelily/nihongo-hub/issues)
 
 ## License
 
