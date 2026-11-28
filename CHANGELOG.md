@@ -2,7 +2,7 @@
 
 This file records notable changes to NihongoHub Server.
 
-NihongoHub Server is currently in the Demo development stage. The first Demo release is planned as `v0.0.1-beta`.
+NihongoHub Server is currently in the Demo development stage
 
 ## [0.0.1-beta] - 2026-11-29
 

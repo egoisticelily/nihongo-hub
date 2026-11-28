@@ -16,7 +16,7 @@
 
 请勿在公开 Issue 中提交密码、JWT、密钥、证书、用户数据或其他敏感信息。
 
-安全漏洞请按照 [SECURITY.md](SECURITY.md) 中的说明，通过私密渠道报告。
+安全漏洞请按照 [SECURITY.md](SECURITY.zh-CN.md) 中的说明，通过私密渠道报告。
 
 ## 提交 Pull Request
 

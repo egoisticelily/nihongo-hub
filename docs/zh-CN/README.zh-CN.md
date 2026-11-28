@@ -140,4 +140,4 @@ NihongoHub Server 仍处于 Demo 开发阶段
 
 ## 许可证
 
-本项目采用 MIT License。详情请参阅 [LICENSE](LICENSE)
+本项目采用 MIT License。详情请参阅 [LICENSE](../../LICENSE)
