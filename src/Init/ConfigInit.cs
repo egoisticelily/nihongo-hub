@@ -7,7 +7,19 @@ namespace NihongoHub.Init
     public static class ConfigInit
     {
         //供调用
-        public static NihongoHub.Models.Config.AppConfig? Current {get;private set;}
+        public static Models.Config.AppConfig Current
+        {
+            get
+            {
+                if(_config == null)
+                {
+                    Logging.LogReporter.Fatal("[内部错误]Config未能初始化",Logging.LogCategory.Unknown);
+                }
+                return _config;
+            }
+        }
+        private static Models.Config.AppConfig? _config;
+
         public static void Load()
         {
             var config = ReadOrCreateConfig();
@@ -15,19 +27,13 @@ namespace NihongoHub.Init
             {
                 Logging.LogReporter.Fatal("Config文件配置错误",Logging.LogCategory.File);
             }
-            Current = config;
+            _config = config;
 
-            ValidateCert();
+            ValidateCertificateFile();
         }
 
-        private static void ValidateCert()
+        private static void ValidateCertificateFile()
         {
-            if(Current == null)
-            {
-                Logging.LogReporter.Fatal("Current配置出现问题：为空",Logging.LogCategory.Unknown);
-                return;
-            }
-
             if (!Current.Server.HttpsEnable)
             {
                 return;
@@ -44,7 +50,7 @@ namespace NihongoHub.Init
         }
 
         //Json读写配置
-        private static readonly JsonSerializerOptions JsonOptions = new()
+        private static readonly JsonSerializerOptions _jsonOptions = new()
         {
             WriteIndented = true,
             RespectNullableAnnotations = true,
@@ -67,7 +73,7 @@ namespace NihongoHub.Init
                 string json = File.ReadAllText(configPath);
 
 
-                var config = JsonSerializer.Deserialize<NihongoHub.Models.Config.AppConfig>(json,JsonOptions);
+                var config = JsonSerializer.Deserialize<NihongoHub.Models.Config.AppConfig>(json,_jsonOptions);
 
                 if(config == null)
                 {
@@ -98,7 +104,7 @@ namespace NihongoHub.Init
 
             static void CreateDefaultConfigFile(string filePath)
             {
-                var config = new NihongoHub.Models.Config.AppConfig
+                var config = new Models.Config.AppConfig
                 {
                     Server = new()
                     {
@@ -110,7 +116,7 @@ namespace NihongoHub.Init
                     },
                     Database = new()
                     {
-                        FileName = Path.Combine("Config","nihongo.db")
+                        FileName = "nihongo.db"
                     },
                     Jwt = new()
                     {
@@ -119,7 +125,7 @@ namespace NihongoHub.Init
                         ExpireMinutes = 10080
                     }
                 };
-                string json = JsonSerializer.Serialize(config,JsonOptions);
+                string json = JsonSerializer.Serialize(config,_jsonOptions);
                 File.WriteAllText(filePath,json);
                 
                 return;

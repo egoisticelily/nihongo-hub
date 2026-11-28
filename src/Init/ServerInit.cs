@@ -7,7 +7,7 @@ namespace NihongoHub.Init{
         {
             var app = CreateApp();
 
-            ConfigureRoute(app);
+            ConfigureRoutes(app);
             try
             {
                 app.Run();
@@ -38,12 +38,8 @@ namespace NihongoHub.Init{
 
             //监听端口配置
             static void ConfigureKestrel(KestrelServerOptions options) {
-                var server = NihongoHub.Init.ConfigInit.Current == null ? null : NihongoHub.Init.ConfigInit.Current.Server;
+                var server = NihongoHub.Init.ConfigInit.Current.Server;
                 
-                if(server == null)
-                {
-                    NihongoHub.Logging.LogReporter.Fatal("Current配置存在问题",Logging.LogCategory.Unknown);
-                }
 
                 if (!System.Net.IPAddress.TryParse(server.Host, out var address))
                 {
@@ -68,10 +64,46 @@ namespace NihongoHub.Init{
             }
         }
 
-        private static void ConfigureRoute(WebApplication app)
+        private static void ConfigureRoutes(WebApplication app)
         {
-            app.UseDefaultFiles();
-            app.UseStaticFiles();
+            //Auth
+            app.MapPost("/api/v1/auth/login",(Func<HttpContext,Task<IResult>>)API.AuthAPI.Login);
+
+            //User
+            app.MapPost("/api/v1/user/password-change",(Func<HttpContext,Task<IResult>>)API.UserAPI.UserPasswordChange);
+
+            //VocabularyNotebook
+            app.MapPost("/api/v1/vocabulary-notebooks/list",(Func<HttpContext,Task<IResult>>)API.VocabularyNotebookAPI.SearchAllVocabularyNotebook);
+
+            app.MapPost("/api/v1/vocabulary-notebooks/search-by-tag",(Func<HttpContext,Task<IResult>>)API.VocabularyNotebookAPI.SearchVocabularyNotebookByTag);
+
+            app.MapPost("/api/v1/vocabulary-notebooks/create",(Func<HttpContext,Task<IResult>>)API.VocabularyNotebookAPI.CreateVocabularyNotebook);
+
+            app.MapPost("/api/v1/vocabulary-notebooks/update",(Func<HttpContext,Task<IResult>>)API.VocabularyNotebookAPI.UpdateVocabularyNotebook);
+
+            app.MapPost("/api/v1/vocabulary-notebooks/delete",(Func<HttpContext,Task<IResult>>)API.VocabularyNotebookAPI.DeleteVocabularyNotebook);
+
+            app.MapPost("/api/v1/vocabulary-notebooks/delete-batch",(Func<HttpContext,Task<IResult>>)API.VocabularyNotebookAPI.DeleteVocabularyNotebookByList);
+
+            app.MapPost("/api/v1/vocabulary-notebooks/addword-in-notebook",(Func<HttpContext,Task<IResult>>)API.VocabularyNotebookAPI.AddWordInNoteBook);
+
+            app.MapPost("/api/v1/vocabulary-notebooks/removeword-in-notebook",(Func<HttpContext,Task<IResult>>)API.VocabularyNotebookAPI.RemoveWordFromNoteBook);
+
+            //Word
+            app.MapPost("/api/v1/words/search",(Func<HttpContext,Task<IResult>>)API.WordAPI.SearchWordByQuery);
+
+            app.MapPost("/api/v1/words/search-by-notebook",(Func<HttpContext,Task<IResult>>)API.WordAPI.SearchWordByVocabularyNotebookId);
+
+            app.MapPost("/api/v1/words/create",(Func<HttpContext,Task<IResult>>)API.WordAPI.CreateWord);
+
+            app.MapPost("/api/v1/words/update",(Func<HttpContext,Task<IResult>>)API.WordAPI.UpdateWord);
+
+            app.MapPost("/api/v1/words/delete",(Func<HttpContext,Task<IResult>>)API.WordAPI.DeleteWord);
+
+            app.MapPost("/api/v1/words/delete-batch",(Func<HttpContext,Task<IResult>>)API.WordAPI.DeleteWordbyList);
+
+            //StatusAPI
+            app.MapPost("/api/v1/status/heartbeat-detection",(Func<HttpContext,Task<IResult>>)API.StatusAPI.HeartbeatDetection);
         }
     }
 }

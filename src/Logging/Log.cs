@@ -7,7 +7,7 @@ namespace NihongoHub.Logging
     {
         Json,       //JSON序列、反序列时遇到的问题
         File,       //文件相关
-        DataBase,   //数据库异常
+        Database,   //数据库异常
         Http,       //HTTP相关错误
         Unknown,    //泛指一切未收录的异常
         None        //不标注类别(普通业务日志)
@@ -44,6 +44,11 @@ namespace NihongoHub.Logging
             Write(LogLevel.Fatal, Format(category, message), exception);
             Log.CloseAndFlush();
             Environment.Exit(1);
+        }
+
+        public static void Secret(string message)
+        {
+            Console.WriteLine(message);
         }
 
         private static string Format(LogCategory category, string message)

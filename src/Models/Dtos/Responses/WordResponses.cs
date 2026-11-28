@@ -1,0 +1,46 @@
+///单词相关响应
+
+namespace NihongoHub.Models.Dtos.Responses
+{
+    public class VocabularyNotebookReferenceResponse
+    {
+        public required int id {get;set;}
+        public required string name {get;set;}
+        public required List<string> tags {get;set;}
+    }
+    
+    public class WordResponse
+    {
+        public required int id {get;set;}
+        public string? kannji {get;set;} //可空
+        public required string kana {get;set;}
+        public int? akusennto {get;set;}
+        public required string meaning {get;set;}
+        public string? note {get;set;}
+        public List<VocabularyNotebookReferenceResponse>? vocabularynotebooks {get;set;} //表示包含该单词的单词本
+        public required DateTime createdat {get;set;} //UTC
+        public required DateTime updatedat {get;set;} //UTC
+    }
+
+    public class Message
+    {
+        public int? id {get;set;}
+        public required string errormessage {get;set;}
+        public string? errorcategory {get;set;}
+    }
+
+    public class WordsResponseData
+    {
+        public required List<WordResponse> words {get;set;}
+        public required List<Message> messages {get;set;}
+    }
+
+
+    public class SearchWordsResponse : ApiResponse<WordsResponseData>;
+    public class DeleteWordsByListSummaryResponseData
+    {
+        public required List<Message> responseDataList {get;set;}
+    }
+    public class DeleteWordsByListSummaryResponse : ApiResponse<DeleteWordsByListSummaryResponseData>;
+
+}

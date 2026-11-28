@@ -2,7 +2,7 @@ using Serilog;
 
 namespace NihongoHub.Init
 {
-    public static class Logginginit
+    public static class LoggingInit
     {
         public static void Init()
         {

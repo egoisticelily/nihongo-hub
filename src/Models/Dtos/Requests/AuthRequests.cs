@@ -1,3 +1,5 @@
+///登录、注册等身份验证相关请求
+
 namespace NihongoHub.Models.Dtos.Requests
 {
     public class LoginRequest
@@ -5,5 +7,4 @@ namespace NihongoHub.Models.Dtos.Requests
         public required string username {get;set;}
         public required string password {get;set;}
     }
-    ///返回的定义之后再定
 }

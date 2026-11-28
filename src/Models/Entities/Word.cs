@@ -9,7 +9,7 @@ namespace NihongoHub.Models.Entities
     /// 但单词必须有一个所属的单词本，应该将每一个单词都包含在"默认单词本"中
     /// </summary>
     
-    public class TannGo
+    public class Word
     {
         [BsonId]
         public int id {get;set;} //单词全局id
@@ -28,7 +28,7 @@ namespace NihongoHub.Models.Entities
     /// tags 属于单词本(如 "N2"),单词本身没有 tag
     /// </summary>
 
-    public class TannGoCyou
+    public class VocabularyNotebook
     {
         [BsonId]
         public int id {set;get;}
